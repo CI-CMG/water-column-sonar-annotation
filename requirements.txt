@@ -2,10 +2,12 @@
 # defined for Python 3.12
 # Note: be careful with conversions for pandas >=2.0.0, timestamps will have a lot of problems
 
+avro==1.12.0
 numpy==1.26.4
 pandas==2.2.3
 pyarrow==18.1.0
 python-dotenv==1.0.1
+s3fs==2024.2.0 # works ...something between 2024.2 and 2024.3 creates the problem
 scipy==1.14.1
 setuptools
 shapely==2.0.3
