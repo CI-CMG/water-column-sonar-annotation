@@ -1,0 +1,16 @@
+# https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
+# defined for Python 3.12
+# Note: be careful with conversions for pandas >=2.0.0, timestamps will have a lot of problems
+
+numpy==1.26.4
+pandas==2.2.3
+pyarrow==18.1.0
+python-dotenv==1.0.1
+scipy==1.14.1
+setuptools
+shapely==2.0.3
+typing-extensions==4.10.0
+xarray==2024.10.0
+#  xbatcher[tensorflow]
+xbatcher==0.4.0
+zarr==2.18.3
