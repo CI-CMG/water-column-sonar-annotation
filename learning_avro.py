@@ -6,7 +6,12 @@ from avro.io import DatumReader, DatumWriter
 
 
 """
-STEP 4 -- Verify cruise HB0707.
+Working through the tutorial
+
+TODO:
+    explore: fastavro as alternative
+    https://fastavro.readthedocs.io/en/latest/
+
 """
 
 # https://colab.research.google.com/drive/1-I56QOIftj9sewlbyzTzncdRt54Fh51d?usp=sharing#scrollTo=mM49CCneMgBx
@@ -30,16 +35,29 @@ def run_process():
 #      {"name": "favorite_color", "type": ["string", "null"]}
 #  ]
 # }
+
+"""
+BT
+20081013 0945237040 0.097133 20081013 0945237040 499.942520 20081013 1005300480 499.942520 20081013 1005300480 0.097133 1 
+251_175_000
+"""
 def run_process2():
     # Following this guide: https://avro.apache.org/docs/1.11.1/getting-started-python/
-    print('Processing: user.avsc')
+    print('Processing: water-column-sonar-annotation.avsc')
 
-    schema = avro.schema.parse(open("./schema/user.avsc", "rb").read())
+    # https://avro.apache.org/docs/1.11.1/specification/
+    # Parsing multiple schemas: https://stackoverflow.com/questions/40854529/nesting-avro-schemas
+    schema = avro.schema.parse(open("./schema/water-column-sonar-annotation.avsc", "rb").read())
 
-    writer = DataFileWriter(open("users.avro", "wb"), DatumWriter(), schema)
-    writer.append({"name": "Alyssa", "favorite_number": 256})
+    writer = DataFileWriter(open("water-column-sonar-annotations.avro", "wb"), DatumWriter(), schema)
+    writer.append(
+        {
+            "name": "Alyssa",
+            "favorite_number": 256
+        }
+    )
     writer.append({"name": "Ben", "favorite_number": 7, "favorite_color": "red"})
-    writer.append({"name": "rudu"})
+    writer.append({"name": "rudu", "kitten": 123})
     writer.close()
 
     reader = DataFileReader(open("users.avro", "rb"), DatumReader())

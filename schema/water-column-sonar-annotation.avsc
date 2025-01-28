@@ -1,0 +1,48 @@
+[
+   {
+      "type": "record",
+      "name": "Annotation",
+      "namespace": "water-column-sonar-annotation.avro",
+      "doc": "https://github.com/CI-CMG/water-column-sonar-annotation",
+      "aliases": ["water-column-sonar-annotation"],
+      "fields":[
+         {
+            "name": "version",
+            "type": "string",
+            "default": "0.0.1",
+         },
+         {
+            "name": "ship",
+            "type": "string",
+         },
+         {
+            "name": "cruise",
+            "type": "string",
+         },
+         {
+            "name": "sensor",
+            "type": "string",
+            "default": "EK60",
+         },
+         {
+            "name": "type",
+            "type": "string",
+            "default": "Polygon",
+         },
+         {
+            "name": "properties"
+            "type": "dict"
+         },
+      ]
+   },
+   {
+      "type": "record",
+      "name": "Polygon",
+      "fields": [
+         {
+           "name": "coordinates",
+           "type": "map"
+         },
+      ]
+   },
+]
