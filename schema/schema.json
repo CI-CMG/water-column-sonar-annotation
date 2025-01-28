@@ -1,0 +1,25 @@
+{
+      "version": "1",
+      "ship": "Henry_B._Bigelow",
+      "cruise": "HB0707",
+      "sensor": "EK60",
+      "area": 2351.45,
+      "bbox": [
+        56.97,
+        56.97,
+        56.97,
+        56.97
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [100, 0],
+            [101, 0],
+            [101, 1],
+            [100, 1],
+            [100, 0]
+          ]
+        ]
+      }
+}

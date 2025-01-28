@@ -26,14 +26,36 @@ def run_process():
     cruise = xr.open_dataset(f"s3://{s3_zarr_store_path}", storage_options={'anon': True})
     print(cruise)
 
-# {"namespace": "example.avro",
-#  "type": "record",
-#  "name": "User",
-#  "fields": [
-#      {"name": "name", "type": "string"},
-#      {"name": "favorite_number",  "type": ["int", "null"]},
-#      {"name": "favorite_color", "type": ["string", "null"]}
-#  ]
+# {
+#     "Info": {
+#         "version": "25.1.2",
+#         "ship": "Henry_B._Bigelow",
+#         "cruise": "HB0707",
+#         "sensor": "EK60"
+#     },
+#     "Annotations": [
+#         {
+#             "area": 2351.45,
+#             "bbox": [
+#                 56.97,
+#                 56.97,
+#                 56.97,
+#                 56.97
+#             ],
+#             "geometry": {
+#                 "type": "Polygon",
+#                 "coordinates": [
+#                     [
+#                         [100, 0],
+#                         [101, 0],
+#                         [101, 1],
+#                         [100, 1],
+#                         [100, 0]
+#                     ]
+#                 ]
+#             }
+#         }
+#     ]
 # }
 
 """
@@ -66,8 +88,78 @@ def run_process2():
 
     reader.close()
 
+def read_water_column_schema():
+
+    # https://avro.apache.org/docs/1.11.1/specification/
+    # Parsing multiple schemas: https://stackoverflow.com/questions/40854529/nesting-avro-schemas
+    schema = avro.schema.parse(open("./schema/water-column-sonar-annotation.avsc", "rb").read())
+
+    writer = DataFileWriter(open("wcsa.avro", "wb"), DatumWriter(), schema)
+    writer.append(
+        {
+            "version": "25.1.2",
+            "ship": "Henry_B._Bigelow",
+            "cruise": "HB0707",
+            "sensor": "EK60",
+            "area": 2351.45,
+            "bbox": [
+                56.97,
+                56.97,
+                56.97,
+                56.97
+            ],
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        ["20250121", 10],
+                        ["20250122", 11],
+                        ["20250123", 12],
+                        ["20250124", 13],
+                        ["20250125", 14]
+                    ]
+                ]
+            }
+        }
+    )
+    writer.append(
+        {
+            "version": "25.1.2",
+            "ship": "Henry_B._Bigelow",
+            "cruise": "HB0707",
+            "sensor": "EK60",
+            "area": 222.2,
+            "bbox": [
+                22,
+                23,
+                24,
+                25
+            ],
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        ["20250128", 0],
+                        ["20250128", 1],
+                        ["20250128", 2],
+                        ["20250128", 3],
+                        ["20250128", 4]
+                    ]
+                ]
+            }
+        }
+    )
+    writer.close()
+
+    reader = DataFileReader(open("wcsa.avro", "rb"), DatumReader())
+    for user in reader:
+        print(user)
+
+    reader.close()
+
 
 
 if __name__ == '__main__':
-    print(version("xarray"))
-    run_process2()
+    # print(version("xarray"))
+    # run_process2()
+    read_water_column_schema()

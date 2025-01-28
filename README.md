@@ -98,3 +98,14 @@ https://colab.research.google.com/drive/18vrI9LAip4xRGEX6EvnuVFp35RAiVYwU#scroll
 
 HB0707 Cruise zoomable:
 https://hb0707.s3.us-east-1.amazonaws.com/index.html
+
+## Annotation format
+```json
+
+# Coco format: https://roboflow.com/formats/coco-json
+# https://www.v7labs.com/blog/coco-dataset-guide
+
+```
+
+
+          "default": [[[100, 0], [101, 0], [101, 1], [100, 1], [100, 0]]]
