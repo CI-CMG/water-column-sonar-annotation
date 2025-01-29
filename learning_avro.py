@@ -1,8 +1,11 @@
-from importlib.metadata import version
 import xarray as xr
 import avro
+import time
 from avro.datafile import DataFileReader, DataFileWriter
 from avro.io import DatumReader, DatumWriter
+import datetime
+
+
 
 
 """
@@ -79,7 +82,7 @@ def run_process2():
         }
     )
     writer.append({"name": "Ben", "favorite_number": 7, "favorite_color": "red"})
-    writer.append({"name": "rudu", "kitten": 123})
+    writer.append({"name": "User2", "kitten": 123})
     writer.close()
 
     reader = DataFileReader(open("users.avro", "rb"), DatumReader())
@@ -94,6 +97,10 @@ def read_water_column_schema():
     # Parsing multiple schemas: https://stackoverflow.com/questions/40854529/nesting-avro-schemas
     schema = avro.schema.parse(open("./schema/water-column-sonar-annotation.avsc", "rb").read())
 
+    # now = datetime.utcnow()  # or datetime.now(your_timezone)
+    # foodate = now.strftime("%Y-%m-%d %H:%M:%S.%f")
+    # foodate = round(time.time() * 1000) # ISO 8601 is better
+
     writer = DataFileWriter(open("wcsa.avro", "wb"), DatumWriter(), schema)
     writer.append(
         {
@@ -101,7 +108,8 @@ def read_water_column_schema():
             "ship": "Henry_B._Bigelow",
             "cruise": "HB0707",
             "sensor": "EK60",
-            "area": 2351.45,
+            "area": 111.11,
+            # TODO: need to add a classification for the output
             "bbox": [
                 56.97,
                 56.97,
@@ -112,11 +120,11 @@ def read_water_column_schema():
                 "type": "Polygon",
                 "coordinates": [
                     [
-                        ["20250121", 10],
-                        ["20250122", 11],
-                        ["20250123", 12],
-                        ["20250124", 13],
-                        ["20250125", 14]
+                        [datetime.datetime.now().isoformat(), 10], # e.g. ['2025-01-29T15:16:35.943485', 10]
+                        [datetime.datetime.now().isoformat(), 11],
+                        [datetime.datetime.now().isoformat(), 12],
+                        [datetime.datetime.now().isoformat(), 13],
+                        [datetime.datetime.now().isoformat(), 14]
                     ]
                 ]
             }
@@ -139,11 +147,11 @@ def read_water_column_schema():
                 "type": "Polygon",
                 "coordinates": [
                     [
-                        ["20250128", 0],
-                        ["20250128", 1],
-                        ["20250128", 2],
-                        ["20250128", 3],
-                        ["20250128", 4]
+                        [datetime.datetime.now().isoformat(), 0],
+                        [datetime.datetime.now().isoformat(), 1],
+                        [datetime.datetime.now().isoformat(), 2],
+                        [datetime.datetime.now().isoformat(), 3],
+                        [datetime.datetime.now().isoformat(), 4]
                     ]
                 ]
             }
@@ -152,8 +160,14 @@ def read_water_column_schema():
     writer.close()
 
     reader = DataFileReader(open("wcsa.avro", "rb"), DatumReader())
-    for user in reader:
-        print(user)
+    for annotation in reader:
+        print(annotation)
+
+    # TODO: create polygon from annotation
+
+    # TODO: mask xarray DataArray with polygon
+
+    # TODO: sample the data
 
     reader.close()
 
