@@ -2,11 +2,16 @@ from os import listdir
 from os.path import isfile, join
 from pathlib import Path
 
-import numpy as np
+import fiona
+import geopandas as gpd
 import pandas as pd
 import xarray as xr
+from shapely import Point
 
-# import s3fs
+bucket_name = "noaa-wcsd-zarr-pds"
+ship_name = "Henry_B._Bigelow"
+cruise_name = "HB1906"
+sensor_name = "EK60"
 
 
 def open_evr_file(cruise):
@@ -14,17 +19,17 @@ def open_evr_file(cruise):
     all_files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     all_evr_files = [i for i in all_files if Path(i).suffix == ".evr"]
     all_evr_files.sort()
-    # evr_file = all_evr_files[0]
+    all_evr_files = all_evr_files[:2]  # TODO: unset this!!!!!!!!!!
+
     for evr_file in all_evr_files:
         print(evr_file)
         with open(mypath + evr_file, "r") as file:
             lines = file.read()
         records = lines.split("\n\n")
         records = [i for i in records if i.startswith("13 ")]  # filter
-        for record in records:
+        pieces = []
+        for index, record in enumerate(records):
             print("_+_+_+_+ start new record _+_+_+")
-            latitude = np.nan
-            longitude = np.nan
             times = record.split(" ")[7:9]  # get the date/time
             converted_time = pd.to_datetime(
                 f"{times[0]}T{times[1]}", format="%Y%m%dT%H%M%S%f"
@@ -40,25 +45,61 @@ def open_evr_file(cruise):
             # for vertice in all_vertices:
             #    create time & depth annotation
             # combined_polygon = []
-            # closest_latitude = cruise.latitude.sel(
-            #     time=converted_time, method="nearest"
-            # )
+            latitude = cruise.latitude.sel(time=converted_time, method="nearest").values
+            longitude = cruise.longitude.sel(
+                time=converted_time, method="nearest"
+            ).values
             # also need ping_time_index?
             print(
                 f"time: {converted_time}, label: {polygon_label}, lat: {latitude}, lon: {longitude}"
             )
+            geom = Point(longitude, latitude)
+            pieces.append(
+                {
+                    "id": index,
+                    "time": converted_time,
+                    "ship": ship_name,
+                    "cruise": cruise_name,
+                    "sensor": sensor_name,
+                    "label": polygon_label,
+                    "geom": geom,
+                }
+            )
+        df = pd.DataFrame(pieces)
+        gps_gdf = gpd.GeoDataFrame(
+            data=df[["id", "time", "ship", "cruise", "sensor", "label"]],
+            geometry=df["geom"],
+            crs="EPSG:4326",
+        )
+        print(gps_gdf)
+        #
+        # {'DXF': 'rw', 'CSV': 'raw', 'OpenFileGDB': 'raw', 'ESRIJSON': 'r', 'ESRI Shapefile': 'raw', 'FlatGeobuf': 'raw', 'GeoJSON': 'raw', 'GeoJSONSeq': 'raw', 'GPKG': 'raw', 'GML': 'rw', 'OGR_GMT': 'rw', 'GPX': 'rw', 'MapInfo File': 'raw', 'DGN': 'raw', 'S57': 'r', 'SQLite': 'raw', 'TopoJSON': 'r'}
+        if "GeoJSON" not in fiona.supported_drivers.keys():
+            raise RuntimeError("Missing GeoJSON driver")
 
+        gps_gdf.set_index("id", inplace=True)
+
+        # write to file
+        gps_gdf.to_file(
+            filename="point_dataset.geojson",
+            driver="GeoJSON",
+            engine="fiona",  # or "pyogrio"
+            layer_options={"ID_GENERATE": "YES"},
+            crs="EPSG:4326",
+            id_generate=True,  # required for the feature click selection
+        )
+
+        print(
+            'Now run this: "tippecanoe --no-feature-limit -zg -o point_dataset.pmtiles -l cruises point_dataset.geojson --force"'
+        )
+    # except Exception as err:
+    # raise RuntimeError(f"Problem parsing Zarr stores, {err}")
     # I don't have the lat/lon information to draw here... need to query the zarr store...
 
     print("done")
 
 
-def open_zarr_store(
-    bucket_name="noaa-wcsd-zarr-pds",
-    ship_name="Henry_B._Bigelow",
-    cruise_name="HB1906",
-    sensor_name="EK60",
-):
+def open_zarr_store():
     zarr_store = f"{cruise_name}.zarr"
     store_path = f"s3://{bucket_name}/level_2/{ship_name}/{cruise_name}/{sensor_name}/{zarr_store}"
     cruise = xr.open_dataset(
