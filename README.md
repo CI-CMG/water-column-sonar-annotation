@@ -1,55 +1,23 @@
 # water-column-sonar-annotation
 Tool for converting EVR files to annotated regions of interest using semantic segmentation
 
-
 # Setting up the Python Environment
-> Python 3.10.12
-
-# MacOS Pyenv Installation Instructions
-  1. Install pyenv (https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv)
-     1. ```brew update```
-     2. ```arch -arm64 brew install pyenv```
-     3. In ~/.bashrc add
-        1. ```export PYENV_ROOT="$HOME/.pyenv"```
-        2. ```export PATH="$PYENV_ROOT/bin:$PATH"```
-        3. ```eval "$(pyenv init -)"```
-     4. ```arch -arm64 brew install openssl readline sqlite3 xz zlib tcl-tk```
-  2. Install pyenv-virtualenv (https://github.com/pyenv/pyenv-virtualenv)
-     1. ```arch -arm64 brew install pyenv-virtualenv```
-     2. In ~/.bashrc add
-         1. ```eval "$(pyenv virtualenv-init -)"```
-  3. Open a new terminal
-  4. Install Python version
-     1. ```env CONFIGURE_OPTS='--enable-optimizations' arch -arm64 pyenv install 3.10.12```
-  5. Create virtual env (to delete 'pyenv uninstall 3.10.12/water-column-sonar-processing')
-     1. ```pyenv virtualenv 3.10.12 water-column-sonar-annotation```
-  6. Set local version of python (if not done already)
-     1. change directory to root of project
-     2. ```pyenv local 3.10.12 water-column-sonar-annotation```
-     3. ```pyenv activate water-column-sonar-annotation```
-
-# Setting up IntelliJ
-
-  1. Install the IntelliJ Python plugin
-  2. Set up pyenv
-     1. File -> Project Structure or CMD + ;
-     2. SDKs -> + -> Add Python SDK -> Virtual Environment
-     3. Select Existing Environment
-     4. Choose ~/.pyenv/versions/mocking_aws/bin/python
-  3. Set up Python Facet (not sure if this is required)
-     1. File -> Project Structure or CMD + ;
-     2. Facets -> + -> Python 
-     3. Set interpreter 
+> Python 3.12.9
 
 # Installing Dependencies
+```
+source .venv/bin/activate
 
-  1. Add dependencies with versions to requirements.txt
-  2. ```pip install --upgrade pip && pip install -r requirements_dev.txt```
+uv pip install --upgrade pip
 
+uv pip install -r pyproject.toml --all-extras
+
+uv run pre-commit install
+```
 
 # Pytest
-```commandline
-pytest --disable-warnings
+```
+uv run pytest tests -W ignore::DeprecationWarning
 ```
 or
 > pytest --cache-clear --cov=src tests/ --cov-report=xml
@@ -62,7 +30,18 @@ https://packaging.python.org/en/latest/tutorials/packaging-projects/
 see here for installation: https://pre-commit.com/
 https://dev.to/rafaelherik/using-trufflehog-and-pre-commit-hook-to-prevent-secret-exposure-edo
 ```
-pre-commit install --allow-missing-config
+uv run pre-commit install --allow-missing-config
+# or
+uv run pre-commit install
+```
+
+# Black
+https://ljvmiranda921.github.io/notebook/2018/06/21/precommits-using-black-and-flake8/
+```
+Settings > Black
+Execution mode: Package
+Python Interpreter: .../.venv/bin/python
+Use Black Formatter: X On Code reformat, X On Save
 ```
 
 # Linting
@@ -72,17 +51,20 @@ https://plugins.jetbrains.com/plugin/20574-ruff
 # Colab Test
 https://colab.research.google.com/drive/1KiLMueXiz9WVB9o4RuzYeGjNZ6PsZU7a#scrollTo=AayVyvpBdfIZ
 
+# Test Coverage
+TODO
+
 # Tag a Release
 Step 1 --> increment the semantic version in the zarr_manager.py "metadata" & the "pyproject.toml"
 ```commandline
-git tag -a v25.1.2 -m "Releasing version v25.1.2"
+git tag -a v25.4.5 -m "Releasing v25.4.5"
 git push origin --tags
 ```
 
 # To Publish To PROD
 ```commandline
-python -m build
-python -m twine upload --repository pypi dist/*
+uv build --no-sources
+uv publish
 ```
 
 # TODO:
@@ -96,16 +78,29 @@ for extracting the version
 Experimental Plotting in Xarray (hvPlot):
 https://colab.research.google.com/drive/18vrI9LAip4xRGEX6EvnuVFp35RAiVYwU#scrollTo=q9_j9p2yXsLV
 
+HB0707 Zoomable Cruise:
+https://hb0707.s3.us-east-1.amazonaws.com/index.html
+
+
+# UV Debugging
+```
+uv lock --check
+uv lock
+uv sync --extra dev
+#uv run pytest tests
+```
+
+# Colab Test
+https://colab.research.google.com/drive/1KiLMueXiz9WVB9o4RuzYeGjNZ6PsZU7a#scrollTo=AayVyvpBdfIZ
+
+
+# Data Debugging
+Experimental Plotting in Xarray (hvPlot):
+https://colab.research.google.com/drive/18vrI9LAip4xRGEX6EvnuVFp35RAiVYwU#scrollTo=q9_j9p2yXsLV
+
 HB0707 Cruise zoomable:
 https://hb0707.s3.us-east-1.amazonaws.com/index.html
 
 ## Annotation format
-```json
-
-# Coco format: https://roboflow.com/formats/coco-json
-# https://www.v7labs.com/blog/coco-dataset-guide
-
-```
-
-
-          "default": [[[100, 0], [101, 0], [101, 1], [100, 1], [100, 0]]]
+- https://roboflow.com/formats/coco-json
+- https://www.v7labs.com/blog/coco-dataset-guide
