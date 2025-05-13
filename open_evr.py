@@ -1,26 +1,27 @@
 import urllib.request
-import shutil
-import xarray as xr
-import numpy as np
-import pandas as pd
-from pandas.testing import assert_frame_equal
-import echoregions as er
+# import shutil
+# import xarray as xr
+# import numpy as np
+# import pandas as pd
+# from pandas.testing import assert_frame_equal
+# import echoregions as er
 
 
 # https://colab.research.google.com/drive/1-I56QOIftj9sewlbyzTzncdRt54Fh51d?usp=sharing#scrollTo=mM49CCneMgBx
 def open_evr_file():
-    bucket_name = 'noaa-wcsd-zarr-pds'
-    ship_name = "Henry_B._Bigelow"
-    cruise_name = "HB0707"
-    sensor_name = "EK60"
+    # bucket_name = 'noaa-wcsd-zarr-pds'
+    # ship_name = "Henry_B._Bigelow"
+    # cruise_name = "HB0707"
+    # sensor_name = "EK60"
     # https://echoregions.readthedocs.io/en/latest/Regions2D_functionality.html
 
     # TEST_DATA_PATH = 'https://raw.githubusercontent.com/OSOceanAcoustics/echoregions/contains_transect_zip/echoregions/test_data'
     TEST_DATA_PATH = 'https://drive.google.com/file/d/1CYrC0y3CYg5jTj0MXICuXtOddb6Aq-bn/view?usp=sharing'
-    urllib.request.urlretrieve(f"{TEST_DATA_PATH}/transect.evr", "transect.evr")
-    regions2d = er.read_evr('transect.evr')
-    regions2d_df = regions2d.data
-    regions2d_df.head(3)
+    urllib.request.urlretrieve(TEST_DATA_PATH, "d20190926_t001252-t115929_Zsc-DWBA-Schools_All-RegionDefs.evr")
+    # regions2d = er.read_evr('transect.evr')
+    # regions2d_df = regions2d.data
+    # regions2d_df.head(3)
+    print('foo')
 
 
 """
