@@ -19,15 +19,15 @@ def open_evr_file(cruise):
     all_files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     all_evr_files = [i for i in all_files if Path(i).suffix == ".evr"]
     all_evr_files.sort()
-    all_evr_files = all_evr_files[:2]  # TODO: unset this!!!!!!!!!!
+    # all_evr_files = all_evr_files[:2]  # TODO: unset this!!!!!!!!!!
 
+    pieces = []
     for evr_file in all_evr_files:
         print(evr_file)
         with open(mypath + evr_file, "r") as file:
             lines = file.read()
         records = lines.split("\n\n")
         records = [i for i in records if i.startswith("13 ")]  # filter
-        pieces = []
         for index, record in enumerate(records):
             print("_+_+_+_+ start new record _+_+_+")
             times = record.split(" ")[7:9]  # get the date/time
@@ -65,33 +65,34 @@ def open_evr_file(cruise):
                     "geom": geom,
                 }
             )
-        df = pd.DataFrame(pieces)
-        gps_gdf = gpd.GeoDataFrame(
-            data=df[["id", "time", "ship", "cruise", "sensor", "label"]],
-            geometry=df["geom"],
-            crs="EPSG:4326",
-        )
-        print(gps_gdf)
-        #
-        # {'DXF': 'rw', 'CSV': 'raw', 'OpenFileGDB': 'raw', 'ESRIJSON': 'r', 'ESRI Shapefile': 'raw', 'FlatGeobuf': 'raw', 'GeoJSON': 'raw', 'GeoJSONSeq': 'raw', 'GPKG': 'raw', 'GML': 'rw', 'OGR_GMT': 'rw', 'GPX': 'rw', 'MapInfo File': 'raw', 'DGN': 'raw', 'S57': 'r', 'SQLite': 'raw', 'TopoJSON': 'r'}
-        if "GeoJSON" not in fiona.supported_drivers.keys():
-            raise RuntimeError("Missing GeoJSON driver")
+    df = pd.DataFrame(pieces)
+    gps_gdf = gpd.GeoDataFrame(
+        data=df[["id", "time", "ship", "cruise", "sensor", "label"]],
+        geometry=df["geom"],
+        crs="EPSG:4326",
+    )
+    print(gps_gdf)
+    #
+    # {'DXF': 'rw', 'CSV': 'raw', 'OpenFileGDB': 'raw', 'ESRIJSON': 'r', 'ESRI Shapefile': 'raw', 'FlatGeobuf': 'raw', 'GeoJSON': 'raw', 'GeoJSONSeq': 'raw', 'GPKG': 'raw', 'GML': 'rw', 'OGR_GMT': 'rw', 'GPX': 'rw', 'MapInfo File': 'raw', 'DGN': 'raw', 'S57': 'r', 'SQLite': 'raw', 'TopoJSON': 'r'}
+    if "GeoJSON" not in fiona.supported_drivers.keys():
+        raise RuntimeError("Missing GeoJSON driver")
 
-        gps_gdf.set_index("id", inplace=True)
+    gps_gdf.set_index("id", inplace=True)
 
-        # write to file
-        gps_gdf.to_file(
-            filename="point_dataset.geojson",
-            driver="GeoJSON",
-            engine="fiona",  # or "pyogrio"
-            layer_options={"ID_GENERATE": "YES"},
-            crs="EPSG:4326",
-            id_generate=True,  # required for the feature click selection
-        )
+    # write to file
+    gps_gdf.to_file(
+        filename="point_dataset.geojson",
+        driver="GeoJSON",
+        engine="fiona",  # or "pyogrio"
+        layer_options={"ID_GENERATE": "YES"},
+        crs="EPSG:4326",
+        id_generate=True,  # required for the feature click selection
+    )
 
-        print(
-            'Now run this: "tippecanoe --no-feature-limit -zg -o point_dataset.pmtiles -l cruises point_dataset.geojson --force"'
-        )
+    print(
+        # TODO: above read into multiple geojson datasets, get ids of each, then write multiple files for multiple layers
+        'Now run this: "tippecanoe --no-feature-limit -zg -o point_dataset.pmtiles -l biome point_dataset.geojson --force"'
+    )
     # except Exception as err:
     # raise RuntimeError(f"Problem parsing Zarr stores, {err}")
     # I don't have the lat/lon information to draw here... need to query the zarr store...
