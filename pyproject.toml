@@ -22,7 +22,7 @@ license-files = ["LICENSE"]
 dependencies = [
     "aiobotocore",
     "build",
-    "echoregions",
+#    "echoregions",
     "fiona",
     "fsspec",
     "geopandas",
