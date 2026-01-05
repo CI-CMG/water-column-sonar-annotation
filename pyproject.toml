@@ -38,7 +38,7 @@ dependencies = [
     "zarr",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "bandit[toml]",
     "build",
@@ -55,21 +55,11 @@ dev = [
 Homepage = "https://github.com/CI-CMG/water-column-sonar-annotation"
 Issues = "https://github.com/CI-CMG/water-column-sonar-annotation/issues"
 
-[tool.setuptools]
-py-modules = []
-
 [tool.bandit]
 exclude_dirs = ["tests"]
 
 [tool.pre-commit-hooks.bandit]
 exclude = ["*/tests/*"]
 
-[tool.isort]
-known_first_party = "water_column_sonar_annotation"
-multi_line_output = 3
-force_grid_wrap = 0
-include_trailing_comma = true
-combine_as_imports = true
-
-[tool.black]
-line-length = 88
+[tool.setuptools.packages.find]
+exclude = ["data*", "tests*"]
