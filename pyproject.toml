@@ -21,12 +21,15 @@ license-files = ["LICENSE"]
 # uv sync --all-groups --upgrade
 dependencies = [
     "aiobotocore",
+    "build",
     "echoregions",
     "fiona",
     "fsspec",
     "geopandas",
+    "netcdf4",
     "numpy",
     "pandas",
+    "pip",
     "pooch",
     "pyarrow",
     "python-dotenv",
