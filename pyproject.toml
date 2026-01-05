@@ -16,11 +16,11 @@ license-files = ["LICENSE"]
 
 # uv sync --all-groups --upgrade
 dependencies = [
-    "aiobotocore",
+#    "aiobotocore",
     "build",
 #    "echoregions",
     "fiona",
-    "fsspec",
+#    "fsspec",
     "geopandas",
     "netcdf4",
     "numpy",
@@ -33,11 +33,12 @@ dependencies = [
     "scipy",
     "setuptools",
     "shapely",
-    "wheel",
+#    "wheel",
     "xarray",
     "zarr",
 ]
 
+# uv sync --all-groups --upgrade
 [dependency-groups]
 dev = [
     "bandit[toml]",
