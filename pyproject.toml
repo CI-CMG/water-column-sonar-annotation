@@ -25,7 +25,6 @@ dependencies = [
     "netcdf4",
     "numpy",
     "pandas",
-    "pip",
     "pooch",
     "pyarrow",
     "python-dotenv",
