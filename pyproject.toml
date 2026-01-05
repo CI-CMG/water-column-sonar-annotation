@@ -48,7 +48,6 @@ dev = [
     "pytest",
     "ruff",
     "tqdm",
-    "twine",
 ]
 
 [project.urls]
