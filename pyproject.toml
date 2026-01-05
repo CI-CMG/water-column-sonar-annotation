@@ -22,11 +22,11 @@ dependencies = [
     "fiona",
 #    "fsspec",
     "geopandas",
-    "netcdf4",
+    "netcdf4==1.7.3",
     "numpy",
     "pandas",
     "pooch",
-    "pyarrow==18.0.0",
+    "pyarrow",
     "pyogrio",
     "python-dotenv",
     "s3fs==2025.12.0", # problem here, uv finds the wrong one
@@ -63,4 +63,4 @@ exclude_dirs = ["tests"]
 exclude = ["*/tests/*"]
 
 [tool.setuptools.packages.find]
-exclude = ["data*", "tests*"]
+exclude = ["data*"]
