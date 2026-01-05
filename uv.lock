@@ -1819,7 +1819,7 @@ wheels = [
 [[package]]
 name = "water-column-sonar-annotation"
 version = "26.1.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
     { name = "aiobotocore" },
     { name = "build" },
@@ -1837,6 +1837,7 @@ dependencies = [
     { name = "scipy" },
     { name = "setuptools" },
     { name = "shapely" },
+    { name = "wheel" },
     { name = "xarray" },
     { name = "zarr" },
 ]
@@ -1871,6 +1872,7 @@ requires-dist = [
     { name = "scipy" },
     { name = "setuptools" },
     { name = "shapely" },
+    { name = "wheel" },
     { name = "xarray" },
     { name = "zarr" },
 ]
@@ -1885,6 +1887,15 @@ dev = [
     { name = "ruff" },
     { name = "tqdm" },
     { name = "twine" },
+]
+
+[[package]]
+name = "wheel"
+version = "0.45.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/8a/98/2d9906746cdc6a6ef809ae6338005b3f21bb568bea3165cfc6a243fdc25c/wheel-0.45.1.tar.gz", hash = "sha256:661e1abd9198507b1409a20c02106d9670b2576e916d58f520316666abca6729", size = 107545 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0b/2c/87f3254fd8ffd29e4c02732eee68a83a1d3c346ae39bc6822dcbcb697f2b/wheel-0.45.1-py3-none-any.whl", hash = "sha256:708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248", size = 72494 },
 ]
 
 [[package]]
