@@ -95,6 +95,6 @@ AH_School
 Region 26
 """
 #
-# if __name__ == '__main__':
-#     cruise = open_zarr_store()
-#     open_evr_file(cruise)
+if __name__ == "__main__":
+    cruise = open_zarr_store()
+    open_evr_file(cruise)
