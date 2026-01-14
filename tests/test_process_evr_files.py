@@ -1,5 +1,4 @@
-input_bucket_name = "example_input_bucket"
-output_bucket_name = "example_output_bucket"
+import pytest
 
 
 #######################################################
@@ -11,6 +10,12 @@ def teardown_module():
     print("teardown")
 
 
+@pytest.fixture
+def process_evr_test_path(test_path):
+    return test_path["DATA_TEST_PATH"]
+
+
 #######################################################
-def test_process_evr_files(tmp_path):
+def test_process_evr_files(process_evr_test_path, tmp_path):
+    print(f"test path: {process_evr_test_path}")
     pass

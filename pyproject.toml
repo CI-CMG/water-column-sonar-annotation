@@ -1,6 +1,6 @@
 [project]
 name = "water-column-sonar-annotation"
-version = "26.1.0"
+version = "26.1.1"
 authors = [
   { name="Rudy Klucik", email="rudy.klucik@noaa.gov" },
 ]
@@ -16,15 +16,16 @@ license-files = ["LICENSE"]
 
 # uv sync --all-groups --upgrade
 dependencies = [
-#    "aiobotocore",
+    #    "aiobotocore",
     "build",
-#    "echoregions",
+    #    "echoregions",
     "fiona",
-#    "fsspec",
+    #    "fsspec",
     "geopandas",
     "netcdf4==1.7.3",
     "numpy",
     "pandas",
+    "pandas-stubs~=2.3.3",
     "pooch",
     "pyarrow",
     "pyogrio",
@@ -33,7 +34,7 @@ dependencies = [
     "scipy",
     "setuptools",
     "shapely",
-#    "wheel",
+    #    "wheel",
     "xarray",
     "zarr",
 ]
