@@ -1,13 +1,90 @@
 from os import listdir
 from os.path import isfile, join
 from pathlib import Path
-from enum import IntEnum
+from typing import Optional
+
 import pandas as pd
 
 """
 https://support.echoview.com/WebHelp/Reference/File_Formats/Export_File_Formats/2D_Region_definition_file_format.htm
 
 """
+class EchoviewRecord:
+    def __init__(
+        self,
+        # endpoint_url: Optional[str] = None,
+
+    ):
+        print('__init__ called')
+        self.region_creation_type = { # Data formats — The region creation type is one of the following
+            '-1': "No type",
+            '0': "Created from a selection made using the horizontal band tool horizontal selection tool",
+            '1': "Created from a selection made using the parallelogram tool parallelogram tool",
+            '2': "Created from a selection made using the polygon tool polygon selection tool",
+            '3': "Created from a selection made using the rectangle tool rectangle tool",
+            '4': "Created from a selection made using the vertical band tool vertical selection tool",
+            '5': "Created as a bottom-relative region or line-relative region",
+            '6': "Created or assigned as Marker region.",
+            '7': "Created using the Detect Schools command",
+            '8': "Invalid or unknown region type",
+            '9': "Created as a fish track region",
+        }
+        self.region_type = {
+            '0': "bad (no data)",
+            '1': "analysis",
+            '2': 'marker',
+            '3': 'fishtracks',
+            '4': "bad (empty water)",
+        }
+        #
+        self.region_structure_version = None # "13" (will be incremented if the region structure changes in future versions)
+        self.point_count = None # Number of points in the region
+        self.region_id = None # # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
+        self.selected = None # "0" (always)
+        self.region_creation_type = None # See "Data formats" definition
+        self.dummy = None # Should always be "-1"
+        self.bounding_rectangle_calculated = None # "1" if the next four fields are valid; "0" otherwise
+        self.left_x_value_of_bounding_rectangle: Optional[str] = None # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        self.top_y_value_of_bounding_rectangle: Optional[str]  = None # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        self.right_x_value_of_bounding_rectangle: Optional[str]  = None # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        self.bottom_y_value_of_bounding_rectangle: Optional[str]  = None # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        self.number_of_lines_of_notes = None # The number of lines of region notes to follow.
+        self.region_notes: Optional[str] = None # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
+        self.number_of_lines_of_detection_settings = None # The number of lines of detection settings to follow.
+        self.region_detection_settings: Optional[str] = None # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
+        self.region_classification = None # Region classification (string). Default value is "Unclassified regions"
+        self.points = None # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
+        self.region_type = None # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
+        self.region_name = None # String
+
+    def __enter__(self):
+        print('__enter__ called')
+        return self
+
+    def __exit__(self, *a):
+        print('__exit__ called')
+
+    def ingest_region(self, region):
+        # evr_region_structure_version = bbox_split[0] # "13" (will be incremented if the region structure changes in future versions)
+        # evr_point_count = bbox_split[1] # Number of points in the region
+        # evr_region_id = # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
+        # evr_selected = # "0" (always)
+        # evr_region_creation_type = # See "Data formats" definition
+        # evr_dummy = # Should always be "-1"
+        # evr_bounding_rectangle_calculated = # "1" if the next four fields are valid; "0" otherwise
+        # evr_left_x_value_of_bounding_rectangle = # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        # evr_top_y_value_of_bounding_rectangle = # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        # evr_right_x_value_of_bounding_rectangle = # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        # evr_bottom_y_value_of_bounding_rectangle = # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        # evr_number_of_lines_of_notes = # The number of lines of region notes to follow.
+        # evr_region_notes = # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
+        # evr_number_of_lines_of_detection_settings = # The number of lines of detection settings to follow.
+        # evr_region_detection_settings = # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
+        # evr_region_classification = # Region classification (string). Default value is "Unclassified regions"
+        # evr_points = # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
+        # evr_region_type = # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
+        # evr_region_name = # String
+        pass
 
 def open_evr_file(): #model_cruise):
     """
@@ -36,25 +113,25 @@ def open_evr_file(): #model_cruise):
             bbox_split = record_lines[0].split() #[x for x in record.split() if x]
             ###
             # https://support.echoview.com/WebHelp/Reference/File_Formats/Export_File_Formats/2D_Region_definition_file_format.htm
-            evr_region_structure_version = bbox_split[0] # "13" (will be incremented if the region structure changes in future versions)
-            evr_point_count = bbox_split[1] # Number of points in the region
-            evr_region_id = # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
-            evr_selected = #
-            evr_region_creation_type = #
-            evr_dummy = #
-            evr_bounding_rectangle_calculated = # "1" if the next four fields are valid "0" otherwise
-            evr_left_x_value_of_bounding_rectangle = #
-            evr_top_y_value_of_bounding_rectangle = #
-            evr_right_x_value_of_bounding_rectangle = #
-            evr_bottom_y_value_of_bounding_rectangle = #
-            evr_number_of_lines_of_notes = # The number of lines of region notes to follow.
-            evr_region_notes = #
-            evr_number_of_lines_of_detection_settings = #
-            evr_region_detection_settings = # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
-            evr_region_classification = # Region classification (string). Default value is "Unclassified regions"
-            evr_points = # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
-            evr_region_type = # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
-            evr_region_name =
+            # evr_region_structure_version = bbox_split[0] # "13" (will be incremented if the region structure changes in future versions)
+            # evr_point_count = bbox_split[1] # Number of points in the region
+            # evr_region_id = # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
+            # evr_selected = # "0" (always)
+            # evr_region_creation_type = # See "Data formats" definition
+            # evr_dummy = # Should always be "-1"
+            # evr_bounding_rectangle_calculated = # "1" if the next four fields are valid; "0" otherwise
+            # evr_left_x_value_of_bounding_rectangle = # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+            # evr_top_y_value_of_bounding_rectangle = # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+            # evr_right_x_value_of_bounding_rectangle = # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+            # evr_bottom_y_value_of_bounding_rectangle = # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+            # evr_number_of_lines_of_notes = # The number of lines of region notes to follow.
+            # evr_region_notes = # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
+            # evr_number_of_lines_of_detection_settings = # The number of lines of detection settings to follow.
+            # evr_region_detection_settings = # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
+            # evr_region_classification = # Region classification (string). Default value is "Unclassified regions"
+            # evr_points = # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
+            # evr_region_type = # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
+            # evr_region_name = # String
 
             ###
             time_start = bbox_split[7:9]  # bbox start time
@@ -255,27 +332,7 @@ class ShapeManager:
         pass
 
 
-# Data formats — The region creation type is one of the following
-region_creation_type = {
-    '-1': "No type",
-    '0': "Created from a selection made using the horizontal band tool horizontal selection tool",
-    '1': "Created from a selection made using the parallelogram tool parallelogram tool",
-    '2': "Created from a selection made using the polygon tool polygon selection tool",
-    '3': "Created from a selection made using the rectangle tool rectangle tool",
-    '4': "Created from a selection made using the vertical band tool vertical selection tool",
-    '5': "Created as a bottom-relative region or line-relative region",
-    '6': "Created or assigned as Marker region.",
-    '7': "Created using the Detect Schools command",
-    '8': "Invalid or unknown region type",
-    '9': "Created as a fish track region",
-}
-region_type = {
-    '0': "bad (no data)",
-    '1': "analysis",
-    '2': 'marker',
-    '3': 'fishtracks',
-    '4': "bad (empty water)",
-}
+
 
 """
 13 12 1 0 2 -1 1 20190925 2053458953  9.2818 20190925 2054119318  11.5333

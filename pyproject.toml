@@ -1,6 +1,6 @@
 [project]
 name = "water-column-sonar-annotation"
-version = "26.1.1"
+version = "26.1.2"
 authors = [
   { name="Rudy Klucik", email="rudy.klucik@noaa.gov" },
 ]
@@ -46,7 +46,6 @@ dev = [
     "build",
     "pooch",
     "pre-commit",
-#    "pyinstaller",
     "pytest",
     "ruff",
     "tqdm",
