@@ -1,5 +1,6 @@
 # shape files for geometry
 *.shp
+*.shx
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
