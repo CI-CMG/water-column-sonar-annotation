@@ -394,16 +394,24 @@ class ShapeManager:
         pass
 
 
-def test_pvlibrary():
-    pvlib.solarposition.get_solarposition(
-        time=pd.DateTimeIndex("2026-01-25T06:08:06Z"),
-        latitude=39.9674884,
-        longitude=-105.2532602,
-        # altitude=None,
-        # pressure=None,
-        # method="nrel_numpy",
-        # temperature=12.0,
+def get_solar_azimuth(
+    iso_time: str = "2026-01-25T14:08:06Z",
+    latitude: float = 39.9674884,
+    longitude: float = -105.2532602,
+):
+    foo123 = pvlib.solarposition.get_solarposition(
+        time=pd.DatetimeIndex([iso_time]),
+        latitude=latitude,
+        longitude=longitude,
+        altitude=0.0,
+    ).azimuth.iloc[0]
+    print(foo123)
+    foo456 = pvlib.solarposition.sun_rise_set_transit_spa(
+        times=pd.DatetimeIndex([iso_time]),
+        latitude=latitude,
+        longitude=longitude,
     )
+    print(foo456)
 
 
 """
@@ -434,8 +442,8 @@ Region 26
 #
 if __name__ == "__main__":
     try:
-        opened_cruise = open_zarr_store()
-        test_pvlibrary()
-        open_evr_file()  # opened_cruise)
+        get_solar_azimuth()
+        # opened_cruise = open_zarr_store()
+        # open_evr_file()  # opened_cruise)
     except Exception as e:
         print(e)
