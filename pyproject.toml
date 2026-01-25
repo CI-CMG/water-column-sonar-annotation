@@ -46,6 +46,7 @@ dev = [
     "build",
     "pooch",
     "pre-commit",
+    "pvlib",
     "pytest",
     "ruff",
     "tqdm",

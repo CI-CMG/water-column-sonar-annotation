@@ -9,62 +9,98 @@ import pandas as pd
 https://support.echoview.com/WebHelp/Reference/File_Formats/Export_File_Formats/2D_Region_definition_file_format.htm
 
 """
+
+
 class EchoviewRecord:
     def __init__(
         self,
         # endpoint_url: Optional[str] = None,
-
     ):
-        print('__init__ called')
-        self.region_creation_type = { # Data formats — The region creation type is one of the following
-            '-1': "No type",
-            '0': "Created from a selection made using the horizontal band tool horizontal selection tool",
-            '1': "Created from a selection made using the parallelogram tool parallelogram tool",
-            '2': "Created from a selection made using the polygon tool polygon selection tool",
-            '3': "Created from a selection made using the rectangle tool rectangle tool",
-            '4': "Created from a selection made using the vertical band tool vertical selection tool",
-            '5': "Created as a bottom-relative region or line-relative region",
-            '6': "Created or assigned as Marker region.",
-            '7': "Created using the Detect Schools command",
-            '8': "Invalid or unknown region type",
-            '9': "Created as a fish track region",
+        print("__init__ called")
+        self.region_creation_type = {  # Data formats — The region creation type is one of the following
+            "-1": "No type",
+            "0": "Created from a selection made using the horizontal band tool horizontal selection tool",
+            "1": "Created from a selection made using the parallelogram tool parallelogram tool",
+            "2": "Created from a selection made using the polygon tool polygon selection tool",
+            "3": "Created from a selection made using the rectangle tool rectangle tool",
+            "4": "Created from a selection made using the vertical band tool vertical selection tool",
+            "5": "Created as a bottom-relative region or line-relative region",
+            "6": "Created or assigned as Marker region.",
+            "7": "Created using the Detect Schools command",
+            "8": "Invalid or unknown region type",
+            "9": "Created as a fish track region",
         }
         self.region_type = {
-            '0': "bad (no data)",
-            '1': "analysis",
-            '2': 'marker',
-            '3': 'fishtracks',
-            '4': "bad (empty water)",
+            "0": "bad (no data)",
+            "1": "analysis",
+            "2": "marker",
+            "3": "fishtracks",
+            "4": "bad (empty water)",
         }
         #
-        self.region_structure_version = None # "13" (will be incremented if the region structure changes in future versions)
-        self.point_count = None # Number of points in the region
-        self.region_id = None # # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
-        self.selected = None # "0" (always)
-        self.region_creation_type = None # See "Data formats" definition
-        self.dummy = None # Should always be "-1"
-        self.bounding_rectangle_calculated = None # "1" if the next four fields are valid; "0" otherwise
-        self.left_x_value_of_bounding_rectangle: Optional[str] = None # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        self.top_y_value_of_bounding_rectangle: Optional[str]  = None # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        self.right_x_value_of_bounding_rectangle: Optional[str]  = None # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        self.bottom_y_value_of_bounding_rectangle: Optional[str]  = None # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        self.number_of_lines_of_notes = None # The number of lines of region notes to follow.
-        self.region_notes: Optional[str] = None # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
-        self.number_of_lines_of_detection_settings = None # The number of lines of detection settings to follow.
-        self.region_detection_settings: Optional[str] = None # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
-        self.region_classification = None # Region classification (string). Default value is "Unclassified regions"
-        self.points = None # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
-        self.region_type = None # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
-        self.region_name = None # String
+        self.region_structure_version = None  # "13" (will be incremented if the region structure changes in future versions)
+        self.point_count = None  # Number of points in the region
+        self.region_id = None  # # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
+        self.selected = None  # "0" (always)
+        self.region_creation_type = None  # See "Data formats" definition
+        self.dummy = None  # Should always be "-1"
+        self.bounding_rectangle_calculated = (
+            None  # "1" if the next four fields are valid; "0" otherwise
+        )
+        self.left_x_value_of_bounding_rectangle: Optional[str] = (
+            None  # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        )
+        self.top_y_value_of_bounding_rectangle: Optional[str] = (
+            None  # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        )
+        self.right_x_value_of_bounding_rectangle: Optional[str] = (
+            None  # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        )
+        self.bottom_y_value_of_bounding_rectangle: Optional[str] = (
+            None  # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        )
+        self.number_of_lines_of_notes = (
+            None  # The number of lines of region notes to follow.
+        )
+        self.region_notes: Optional[str] = (
+            None  # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
+        )
+        self.number_of_lines_of_detection_settings = (
+            None  # The number of lines of detection settings to follow.
+        )
+        self.region_detection_settings: Optional[str] = (
+            None  # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
+        )
+        self.region_classification = None  # Region classification (string). Default value is "Unclassified regions"
+        self.points = None  # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
+        self.region_type = None  # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
+        self.region_name = None  # String
 
     def __enter__(self):
-        print('__enter__ called')
+        print("__enter__ called")
         return self
 
     def __exit__(self, *a):
-        print('__exit__ called')
+        print("__exit__ called")
+
+    @staticmethod
+    def chunks(lst, n):
+        """Yield successive n-sized chunks from lst."""
+        for i in range(0, len(lst), n):
+            # yield lst[i:i + n]
+            yield " ".join(lst[i : i + n])
 
     def ingest_region(self, region):
+        """
+        TODO: ingest a record, get the bbox, polygon, and label
+        #
+        Convert data to dataframe and save to parquet file compressed, 1-file
+        # TODO: tag & release
+        #
+        Need way to convert to geopandas?!
+        :param region:
+        :return:
+        """
         # evr_region_structure_version = bbox_split[0] # "13" (will be incremented if the region structure changes in future versions)
         # evr_point_count = bbox_split[1] # Number of points in the region
         # evr_region_id = # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
@@ -86,7 +122,13 @@ class EchoviewRecord:
         # evr_region_name = # String
         pass
 
-def open_evr_file(): #model_cruise):
+    def process_point_data(self, point_data):
+        foo = list(self.chunks(point_data, 3))
+        print(foo)
+        return foo
+
+
+def open_evr_file():  # model_cruise):
     """
     Open evr file and create records for each entry
     # :param model_cruise:
@@ -94,7 +136,11 @@ def open_evr_file(): #model_cruise):
     """
     # print(model_cruise)
     mypath = "../data/HB201906/"
-    all_evr_files = [f for f in listdir(mypath) if isfile(join(mypath, f)) and Path(f).suffix == '.evr']
+    all_evr_files = [
+        f
+        for f in listdir(mypath)
+        if isfile(join(mypath, f)) and Path(f).suffix == ".evr"
+    ]
     all_evr_files.sort()
     for evr_file in all_evr_files:
         print(evr_file)
@@ -110,7 +156,7 @@ def open_evr_file(): #model_cruise):
             record_lines = record.split("\n")
             ####################################
             ############# get bbox #############
-            bbox_split = record_lines[0].split() #[x for x in record.split() if x]
+            bbox_split = record_lines[0].split()  # [x for x in record.split() if x]
             ###
             # https://support.echoview.com/WebHelp/Reference/File_Formats/Export_File_Formats/2D_Region_definition_file_format.htm
             # evr_region_structure_version = bbox_split[0] # "13" (will be incremented if the region structure changes in future versions)
@@ -144,8 +190,8 @@ def open_evr_file(): #model_cruise):
             converted_time_end = pd.to_datetime(
                 f"{time_end[0]}T{time_end[1]}", format="%Y%m%dT%H%M%S%f"
             )
-            upper_left = [converted_time_start, float(bbox_split[9])] # [x_min, y_min]
-            bottom_right = [converted_time_end, float(bbox_split[12])] # [x_max, y_max]
+            upper_left = [converted_time_start, float(bbox_split[9])]  # [x_min, y_min]
+            bottom_right = [converted_time_end, float(bbox_split[12])]  # [x_max, y_max]
             # bounding_box = record_split[0]  # TODO: get box
             # polygon_label = record_split[-3]
             print(f"bounding box: {upper_left}, {bottom_right}")
@@ -159,6 +205,10 @@ def open_evr_file(): #model_cruise):
             print(polygon_data)
             #
             # [1] break up polygon
+            if True:
+                evr = EchoviewRecord()
+                polygon_region = evr.process_point_data(polygon_data.split(" "))
+                print(polygon_region)
             #
             # [3] convert each point
             #
@@ -181,13 +231,21 @@ def open_evr_file(): #model_cruise):
             # print(
             #     f"time: {converted_time}, label: {polygon_label}"
             # )
-            print('\n')
+            print("done reading")
+            print("\n")
 
     # I don't have the lat/lon information to draw here... need to query the zarr store...
 
     print("done")
 
-labels = ["possible_herring", "fish_school", "Unclassified regions", "krill_schools", "AH_School"]
+
+labels = [
+    "possible_herring",
+    "fish_school",
+    "Unclassified regions",
+    "krill_schools",
+    "AH_School",
+]
 labels_with_extra_data = ["fish_school", "krill_schools", "AH_School"]
 record_header = """EVRG 7 11.0.244.39215
 11"""
@@ -301,6 +359,7 @@ Region 28"""
 #     except Exception as e:
 #         print(f'could not process cruise: {e}')
 
+
 class ShapeManager:
     def __init__(
         self,
@@ -312,7 +371,7 @@ class ShapeManager:
         date_string,
         time_string,
         depth_string,
-    ): # -> returntype # TODO:
+    ):  # -> returntype # TODO:
         pass
 
     def polygon(
@@ -320,7 +379,7 @@ class ShapeManager:
         date_string,
         time_string,
         depth_string,
-    ): # -> type # TODO:
+    ):  # -> type # TODO:
         pass
 
     def bbox(
@@ -328,10 +387,8 @@ class ShapeManager:
         date_string,
         time_string,
         depth_string,
-    ): # -> returntype # TODO:
+    ):  # -> returntype # TODO:
         pass
-
-
 
 
 """
@@ -363,6 +420,6 @@ Region 26
 if __name__ == "__main__":
     try:
         # opened_cruise = open_zarr_store()
-        open_evr_file() #opened_cruise)
+        open_evr_file()  # opened_cruise)
     except Exception as e:
         print(e)
