@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
+import pvlib
+import xarray as xr
 
 """
 https://support.echoview.com/WebHelp/Reference/File_Formats/Export_File_Formats/2D_Region_definition_file_format.htm
@@ -178,7 +180,8 @@ def open_evr_file():  # model_cruise):
             # evr_points = # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
             # evr_region_type = # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
             # evr_region_name = # String
-
+            ###
+            #
             ###
             time_start = bbox_split[7:9]  # bbox start time
             time_end = bbox_split[10:12]  # bbox end time
@@ -338,26 +341,26 @@ AH_School
 20191106 1317315725 34.3319755445 20191106 1317315725 35.8635634446 20191106 1317325735 35.8635634446 20191106 1317325735 35.4794661656 20191106 1317335745 35.4794661656 20191106 1317335745 34.5192229680 20191106 1317325735 34.5192229680 20191106 1317325735 34.3271743285 20191106 1317335745 34.3271743285 20191106 1317335745 31.8305420148 20191106 1317315725 31.8305420148 20191106 1317315725 34.1303244730 20191106 1317315475 34.1351256890 20191106 1317305715 34.1351256890 20191106 1317305715 34.3271743285 20191106 1317315475 34.3271743285 1
 Region 28"""
 
-### dont care about cruise yet ###
-# def open_zarr_store(
-#     bucket_name="noaa-wcsd-zarr-pds",
-#     level = "level_2a",
-#     ship_name="Henry_B._Bigelow",
-#     cruise_name="HB1906",
-#     sensor_name="EK60",
-# ):
-#     try:
-#         zarr_store = f"{cruise_name}.zarr"
-#         store_path = f"s3://{bucket_name}/{level}/{ship_name}/{cruise_name}/{sensor_name}/{zarr_store}"
-#         kwargs = {'consolidated': False}
-#         return xr.open_dataset(
-#             filename_or_obj=store_path,
-#             engine="zarr",
-#             storage_options={'anon': True},
-#             **kwargs,
-#         )
-#     except Exception as e:
-#         print(f'could not process cruise: {e}')
+
+def open_zarr_store(
+    bucket_name="noaa-wcsd-zarr-pds",
+    level="level_2a",
+    ship_name="Henry_B._Bigelow",
+    cruise_name="HB1906",
+    sensor_name="EK60",
+):
+    try:
+        zarr_store = f"{cruise_name}.zarr"
+        store_path = f"s3://{bucket_name}/{level}/{ship_name}/{cruise_name}/{sensor_name}/{zarr_store}"
+        kwargs = {"consolidated": False}
+        return xr.open_dataset(
+            filename_or_obj=store_path,
+            engine="zarr",
+            storage_options={"anon": True},
+            **kwargs,
+        )
+    except Exception as e:
+        print(f"could not process cruise: {e}")
 
 
 class ShapeManager:
@@ -391,6 +394,18 @@ class ShapeManager:
         pass
 
 
+def test_pvlibrary():
+    pvlib.solarposition.get_solarposition(
+        time=pd.DateTimeIndex("2026-01-25T06:08:06Z"),
+        latitude=39.9674884,
+        longitude=-105.2532602,
+        # altitude=None,
+        # pressure=None,
+        # method="nrel_numpy",
+        # temperature=12.0,
+    )
+
+
 """
 13 12 1 0 2 -1 1 20190925 2053458953  9.2818 20190925 2054119318  11.5333
 0
@@ -419,7 +434,8 @@ Region 26
 #
 if __name__ == "__main__":
     try:
-        # opened_cruise = open_zarr_store()
+        opened_cruise = open_zarr_store()
+        test_pvlibrary()
         open_evr_file()  # opened_cruise)
     except Exception as e:
         print(e)

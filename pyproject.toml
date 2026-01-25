@@ -2,10 +2,10 @@
 name = "water-column-sonar-annotation"
 version = "26.1.2"
 authors = [
-  { name="Rudy Klucik", email="rudy.klucik@noaa.gov" },
+    { name = "Rudy Klucik", email = "rudy.klucik@noaa.gov" },
 ]
 maintainers = [
-  { name="Rudy Klucik", email="rudy.klucik@noaa.gov" },
+    { name = "Rudy Klucik", email = "rudy.klucik@noaa.gov" },
 ]
 description = "Processing tool for working with water column sonar annotation data."
 keywords = ["ocean", "sonar", "water column"]
@@ -20,12 +20,11 @@ dependencies = [
     "build",
     #    "echoregions",
     "fiona",
-    #    "fsspec",
     "geopandas",
-    "netcdf4==1.7.3",
+    "netcdf4",
     "numpy",
     "pandas",
-    "pandas-stubs~=2.3.3",
+    "pandas-stubs",
     "pooch",
     "pyarrow",
     "pyogrio",
