@@ -1,3 +1,5 @@
+# import tempfile
+
 import geopandas as gpd
 import numpy as np
 from shapely import Point
@@ -20,15 +22,15 @@ class GeospatialManager:
         self.DECIMAL_PRECISION = 6
         self.crs = "EPSG:4326"  # "EPSG:3857"  # "EPSG:4326"
 
-    def check_distance(
+    def check_distance_from_coastline(
         self,  # -30.410156 51.508742)
         latitude: float = 51.508742,  # 42.682435,
         longitude: float = -30.410156,  # -68.741455,
+        shapefile_path=None,
     ) -> float | None:
         try:
-            geometry_one = gpd.read_file(
-                "ne_50m_coastline.shp"
-            )  # requires the shape file too
+            # requires the shape file too
+            geometry_one = gpd.read_file(f"{shapefile_path}/ne_50m_coastline.shp")
             geometry_one = geometry_one.set_crs(self.crs)
             geometry_two = Point([longitude, latitude])
             gdf_p = gpd.GeoDataFrame(geometry=[geometry_two], crs=self.crs)
@@ -48,5 +50,5 @@ class GeospatialManager:
 #
 # if __name__ == "__main__":
 #     geospatial_manager = GeospatialManager()
-#     distance = geospatial_manager.check_distance()
+#     distance = geospatial_manager.check_distance_from_coastline()
 #     print(distance)

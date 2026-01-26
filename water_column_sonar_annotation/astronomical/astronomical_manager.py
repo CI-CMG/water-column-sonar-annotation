@@ -11,7 +11,6 @@ class AstronomicalManager:
 
     def get_solar_azimuth(
         self,
-        # iso_time: str = "2026-01-26T18:42:00Z",
         iso_time: str = "2026-01-26T00:06:00Z",
         latitude: float = 39.9674884,  # boulder gps coordinates
         longitude: float = -105.2532602,
@@ -46,6 +45,10 @@ class AstronomicalManager:
         # )
         # Note: sunrise & sunset can be consolidated into altitude
         return elevation
+
+    def get_moon_phase(self):
+        # TODO: add method for getting the moon phase
+        pass
 
 
 # if __name__ == "__main__":
