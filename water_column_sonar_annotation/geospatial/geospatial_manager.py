@@ -32,7 +32,7 @@ class GeospatialManager:
     ) -> float | None:
         try:
             # requires the shape file too
-            geometry_one = gpd.read_file(f"{shapefile_path}/ne_50m_coastline.shp")
+            geometry_one = gpd.read_file(f"{shapefile_path}/ne_10m_coastline.shp")
             geometry_one = geometry_one.set_crs(self.crs)
             geometry_two = Point([longitude, latitude])
             gdf_p = gpd.GeoDataFrame(geometry=[geometry_two], crs=self.crs)
@@ -55,8 +55,6 @@ class GeospatialManager:
         longitude: float = -30.410156,
     ) -> str:
         # https://www.geeksforgeeks.org/python/get-time-zone-of-a-given-location-using-python/
-        # latitude = 51.508742
-        # longitude = -30.410156
         obj = TimezoneFinder()
         calculated_timezone = obj.timezone_at(lng=longitude, lat=latitude)
         from_zone = tz.gettz("UTC")
