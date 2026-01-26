@@ -1,8 +1,10 @@
-# import tempfile
+from datetime import datetime
 
 import geopandas as gpd
 import numpy as np
+from dateutil import tz
 from shapely import Point
+from timezonefinder import TimezoneFinder
 
 """
 Gets the distance between a point and a coastline
@@ -46,9 +48,32 @@ class GeospatialManager:
         except Exception as e:
             print(f"Could not process the distance: {e}")
 
+    def get_local_time(
+        self,
+        iso_time: str = "2026-01-26T20:35:00Z",
+        latitude: float = 51.508742,
+        longitude: float = -30.410156,
+    ):
+        # https://www.geeksforgeeks.org/python/get-time-zone-of-a-given-location-using-python/
+        # latitude = 51.508742
+        # longitude = -30.410156
+        obj = TimezoneFinder()
+        calculated_timezone = obj.timezone_at(lng=longitude, lat=latitude)
+        from_zone = tz.gettz("UTC")
+        to_zone = tz.gettz(calculated_timezone)
+        utc = datetime.fromisoformat(iso_time)
+        utc = utc.replace(tzinfo=from_zone)
+        local_time = utc.astimezone(to_zone)
+        return local_time.isoformat()  # [:19]
+
 
 #
 # if __name__ == "__main__":
 #     geospatial_manager = GeospatialManager()
-#     distance = geospatial_manager.check_distance_from_coastline()
-#     print(distance)
+#     # x = geospatial_manager.check_distance_from_coastline()
+#     x = geospatial_manager.get_local_time(
+#         iso_time="2026-01-26T20:35:00Z",
+#         latitude=51.508742,
+#         longitude=-30.410156,
+#     )
+#     print(x)

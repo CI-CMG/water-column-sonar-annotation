@@ -7,7 +7,7 @@ Tool for converting EVR files to annotated regions of interest using semantic se
 
 # Setting up the Python Environment
 
-> Python 3.12.9
+> Python 3.12.12
 
 # Installing Dependencies
 
@@ -30,25 +30,11 @@ uv run pytest tests -W ignore::DeprecationWarning
 or
 > pytest --cache-clear --cov=src tests/ --cov-report=xml
 
-# Instructions
-
-Following this tutorial:
-https://packaging.python.org/en/latest/tutorials/packaging-projects/
-
-# Pre Commit Hook
-
-see here for installation: https://pre-commit.com/
-https://dev.to/rafaelherik/using-trufflehog-and-pre-commit-hook-to-prevent-secret-exposure-edo
-
 ```
 uv run pre-commit install --allow-missing-config
 # or
 uv run pre-commit install
 ```
-
-# Colab Test
-
-https://colab.research.google.com/drive/1KiLMueXiz9WVB9o4RuzYeGjNZ6PsZU7a#scrollTo=AayVyvpBdfIZ
 
 # Test Coverage
 
@@ -76,18 +62,6 @@ uv publish
 add https://pypi.org/project/setuptools-scm/
 for extracting the version
 
-# Security scanning
-
-> bandit -r water_column_sonar_processing/
-
-# Data Debugging
-
-Experimental Plotting in Xarray (hvPlot):
-https://colab.research.google.com/drive/18vrI9LAip4xRGEX6EvnuVFp35RAiVYwU#scrollTo=q9_j9p2yXsLV
-
-HB0707 Zoomable Cruise:
-https://hb0707.s3.us-east-1.amazonaws.com/index.html
-
 # UV Debugging
 
 ```
@@ -96,18 +70,6 @@ uv lock
 uv sync --extra dev
 #uv run pytest tests
 ```
-
-# Colab Test
-
-https://colab.research.google.com/drive/1KiLMueXiz9WVB9o4RuzYeGjNZ6PsZU7a#scrollTo=AayVyvpBdfIZ
-
-# Data Debugging
-
-Experimental Plotting in Xarray (hvPlot):
-https://colab.research.google.com/drive/18vrI9LAip4xRGEX6EvnuVFp35RAiVYwU#scrollTo=q9_j9p2yXsLV
-
-HB0707 Cruise zoomable:
-https://hb0707.s3.us-east-1.amazonaws.com/index.html
 
 ## Annotation format
 
