@@ -14,9 +14,10 @@ def teardown_module():
 
 def test_get_solar_azimuth():
     astronomical_manager = AstronomicalManager()
+    # https://www.suncalc.org/#/39.9812,-105.2495,13/2026.01.26/11:52/1/3
     azimuth_noon = astronomical_manager.get_solar_azimuth(
         iso_time="2026-01-26T19:00:00Z",  # noon
-        latitude=39.9674884,
+        latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
     assert np.isclose(azimuth_noon, 31.3815)

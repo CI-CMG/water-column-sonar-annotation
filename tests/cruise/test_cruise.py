@@ -1,5 +1,7 @@
 import pytest
 
+from water_column_sonar_annotation.cruise import CruiseManager
+
 
 #######################################################
 def setup_module():
@@ -11,12 +13,12 @@ def teardown_module():
 
 
 @pytest.fixture
-def process_evr_test_path(test_path):
+def process_cruise_path(test_path):
     return test_path["DATA_TEST_PATH"]
 
 
 #######################################################
-@pytest.mark.skip(reason="todo implement this")
-def test_process_evr_files(process_evr_test_path, tmp_path):
-    print(f"test path: {process_evr_test_path}")
-    pass
+def test_get_cruise(process_cruise_path, tmp_path):
+    cruise_manager = CruiseManager()
+    cruise = cruise_manager.get_cruise()
+    assert len(cruise.Sv.shape) == 3

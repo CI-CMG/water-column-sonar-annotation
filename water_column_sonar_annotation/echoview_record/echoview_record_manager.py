@@ -12,7 +12,14 @@ https://support.echoview.com/WebHelp/Reference/File_Formats/Export_File_Formats/
 """
 
 
-class EchoviewRecord:
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        # yield lst[i:i + n]
+        yield " ".join(lst[i : i + n])
+
+
+class EchoviewRecordManager:
     def __init__(
         self,
         # endpoint_url: Optional[str] = None,
@@ -83,13 +90,6 @@ class EchoviewRecord:
 
     def __exit__(self, *a):
         print("__exit__ called")
-
-    @staticmethod
-    def chunks(lst, n):
-        """Yield successive n-sized chunks from lst."""
-        for i in range(0, len(lst), n):
-            # yield lst[i:i + n]
-            yield " ".join(lst[i : i + n])
 
     def ingest_region(self, region):
         """
@@ -208,7 +208,7 @@ def open_evr_file():  # model_cruise):
             #
             # [1] break up polygon
             if True:
-                evr = EchoviewRecord()
+                evr = EchoviewRecordManager()
                 polygon_region = evr.process_point_data(polygon_data.split(" "))
                 print(polygon_region)
             #

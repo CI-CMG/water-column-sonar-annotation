@@ -26,8 +26,10 @@ HB1906_DATA = pooch.create(
 def fetch_raw_files():
     HB1906_DATA.fetch(fname="HB201906_BOTTOMS.zip", progressbar=True)
     HB1906_DATA.fetch(fname="HB201906_EVR.zip", progressbar=True)
+
     # HB1906_DATA.fetch(fname="ne_50m_coastline.shp", progressbar=True)
     # HB1906_DATA.fetch(fname="ne_50m_coastline.shx", progressbar=True)
+
     HB1906_DATA.fetch(fname="ne_10m_coastline.shp", progressbar=True)
     HB1906_DATA.fetch(fname="ne_10m_coastline.shx", progressbar=True)
 
@@ -35,7 +37,7 @@ def fetch_raw_files():
 
     """
     water-column-sonar-annotation user$ ls /Users/user/Library/Caches/water-column-sonar-annotation
-    HB201906_BOTTOMS.zip	HB201906_EVR.zip	ne_50m_coastline.shp	ne_50m_coastline.shx
+    HB201906_BOTTOMS.zip	HB201906_EVR.zip	ne_10m_coastline.shp	ne_10m_coastline.shx
     """
     return Path(file_name).parent
 
@@ -43,7 +45,6 @@ def fetch_raw_files():
 @pytest.fixture(scope="session")
 def test_path():
     return {
-        # "DATA_TEST_PATH": TEST_DATA_FOLDER / "data",
         "DATA_TEST_PATH": fetch_raw_files(),
     }
 

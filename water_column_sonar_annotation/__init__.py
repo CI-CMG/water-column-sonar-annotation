@@ -1,8 +1,5 @@
 from __future__ import absolute_import
 
-from . import astronomical, geospatial
+from . import astronomical, echoview_record, geospatial
 
-__all__ = [
-    "geospatial",
-    "astronomical",
-]
+__all__ = ["astronomical", "echoview_record", "geospatial"]
