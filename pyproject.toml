@@ -1,6 +1,6 @@
 [project]
 name = "water-column-sonar-annotation"
-version = "26.1.4"
+version = "26.1.5"
 authors = [
     { name = "Rudy Klucik", email = "rudy.klucik@noaa.gov" },
 ]
@@ -16,9 +16,7 @@ license-files = ["LICENSE"]
 
 # uv sync --all-groups --upgrade
 dependencies = [
-    #    "aiobotocore",
     "build",
-    #    "echoregions",
     "fiona",
     "folium",
     "geopandas",

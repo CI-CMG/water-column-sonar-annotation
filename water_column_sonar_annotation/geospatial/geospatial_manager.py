@@ -28,7 +28,7 @@ class GeospatialManager:
         self,  # -30.410156 51.508742)
         latitude: float = 51.508742,  # 42.682435,
         longitude: float = -30.410156,  # -68.741455,
-        shapefile_path=None,
+        shapefile_path: str = None,
     ) -> float | None:
         try:
             # requires the shape file too
@@ -53,7 +53,7 @@ class GeospatialManager:
         iso_time: str = "2026-01-26T20:35:00Z",
         latitude: float = 51.508742,
         longitude: float = -30.410156,
-    ):
+    ) -> str:
         # https://www.geeksforgeeks.org/python/get-time-zone-of-a-given-location-using-python/
         # latitude = 51.508742
         # longitude = -30.410156
@@ -65,6 +65,24 @@ class GeospatialManager:
         utc = utc.replace(tzinfo=from_zone)
         local_time = utc.astimezone(to_zone)
         return local_time.isoformat()  # [:19]
+
+    def get_hour_of_day(
+        self,
+        iso_time: str = "2026-01-26T20:35:00Z",
+        latitude: float = 51.508742,
+        longitude: float = -30.410156,
+    ) -> int:
+        local_time = self.get_local_time(
+            iso_time=iso_time,
+            latitude=latitude,
+            longitude=longitude,
+        )
+        return int(local_time[11:13])
+
+    def get_month_of_year(
+        self,
+    ):
+        pass
 
 
 #
