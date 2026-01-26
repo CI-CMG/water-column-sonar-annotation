@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-import pvlib
 import xarray as xr
 
 """
@@ -394,26 +393,6 @@ class ShapeManager:
         pass
 
 
-def get_solar_azimuth(
-    iso_time: str = "2026-01-25T14:08:06Z",
-    latitude: float = 39.9674884,
-    longitude: float = -105.2532602,
-):
-    foo123 = pvlib.solarposition.get_solarposition(
-        time=pd.DatetimeIndex([iso_time]),
-        latitude=latitude,
-        longitude=longitude,
-        altitude=0.0,
-    ).azimuth.iloc[0]
-    print(foo123)
-    foo456 = pvlib.solarposition.sun_rise_set_transit_spa(
-        times=pd.DatetimeIndex([iso_time]),
-        latitude=latitude,
-        longitude=longitude,
-    )
-    print(foo456)
-
-
 """
 13 12 1 0 2 -1 1 20190925 2053458953  9.2818 20190925 2054119318  11.5333
 0
@@ -440,10 +419,10 @@ AH_School
 Region 26
 """
 #
-if __name__ == "__main__":
-    try:
-        get_solar_azimuth()
-        # opened_cruise = open_zarr_store()
-        # open_evr_file()  # opened_cruise)
-    except Exception as e:
-        print(e)
+# if __name__ == "__main__":
+#     try:
+#         # get_solar_azimuth()
+#         # opened_cruise = open_zarr_store()
+#         # open_evr_file()  # opened_cruise)
+#     except Exception as e:
+#         print(e)
