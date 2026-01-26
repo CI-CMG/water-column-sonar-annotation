@@ -1,10 +1,16 @@
-# water-column-sonar-annotation
+# Water Column Sonar Annotation
+
 Tool for converting EVR files to annotated regions of interest using semantic segmentation
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/CI-CMG/water-column-sonar-annotation/test_action.yaml)
+![PyPI - Implementation](https://img.shields.io/pypi/v/water-column-sonar-annotation) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/CI-CMG/water-column-sonar-annotation) ![GitHub repo size](https://img.shields.io/github/repo-size/CI-CMG/water-column-sonar-annotation)
+
 # Setting up the Python Environment
+
 > Python 3.12.9
 
 # Installing Dependencies
+
 ```
 source .venv/bin/activate
 
@@ -16,19 +22,24 @@ uv run pre-commit install
 ```
 
 # Pytest
+
 ```
 uv run pytest tests -W ignore::DeprecationWarning
 ```
+
 or
 > pytest --cache-clear --cov=src tests/ --cov-report=xml
 
 # Instructions
+
 Following this tutorial:
 https://packaging.python.org/en/latest/tutorials/packaging-projects/
 
 # Pre Commit Hook
+
 see here for installation: https://pre-commit.com/
 https://dev.to/rafaelherik/using-trufflehog-and-pre-commit-hook-to-prevent-secret-exposure-edo
+
 ```
 uv run pre-commit install --allow-missing-config
 # or
@@ -36,9 +47,11 @@ uv run pre-commit install
 ```
 
 # Colab Test
+
 https://colab.research.google.com/drive/1KiLMueXiz9WVB9o4RuzYeGjNZ6PsZU7a#scrollTo=AayVyvpBdfIZ
 
 # Test Coverage
+
 TODO
 
 # Tag a Release
@@ -52,27 +65,31 @@ gh release create v26.1.0
 ```
 
 # To Publish To PROD
+
 ```commandline
 uv build --no-sources
 uv publish
 ```
 
 # TODO:
+
 add https://pypi.org/project/setuptools-scm/
 for extracting the version
 
 # Security scanning
+
 > bandit -r water_column_sonar_processing/
 
 # Data Debugging
+
 Experimental Plotting in Xarray (hvPlot):
 https://colab.research.google.com/drive/18vrI9LAip4xRGEX6EvnuVFp35RAiVYwU#scrollTo=q9_j9p2yXsLV
 
 HB0707 Zoomable Cruise:
 https://hb0707.s3.us-east-1.amazonaws.com/index.html
 
-
 # UV Debugging
+
 ```
 uv lock --check
 uv lock
@@ -81,10 +98,11 @@ uv sync --extra dev
 ```
 
 # Colab Test
+
 https://colab.research.google.com/drive/1KiLMueXiz9WVB9o4RuzYeGjNZ6PsZU7a#scrollTo=AayVyvpBdfIZ
 
-
 # Data Debugging
+
 Experimental Plotting in Xarray (hvPlot):
 https://colab.research.google.com/drive/18vrI9LAip4xRGEX6EvnuVFp35RAiVYwU#scrollTo=q9_j9p2yXsLV
 
@@ -92,5 +110,6 @@ HB0707 Cruise zoomable:
 https://hb0707.s3.us-east-1.amazonaws.com/index.html
 
 ## Annotation format
+
 - https://roboflow.com/formats/coco-json
 - https://www.v7labs.com/blog/coco-dataset-guide
