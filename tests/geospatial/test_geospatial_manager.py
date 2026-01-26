@@ -37,11 +37,21 @@ def test_get_local_time():
     assert local_time == "2026-01-26T18:35:00-02:00"
 
 
-def test_get_hour_of_day():
+def test_get_local_hour_of_day():
     geospatial_manager = GeospatialManager()
-    local_hour_of_day = geospatial_manager.get_hour_of_day(
+    local_hour_of_day = geospatial_manager.get_local_hour_of_day(
         iso_time="2026-01-26T20:35:00Z",
         latitude=51.508742,
         longitude=-30.410156,
     )
     assert local_hour_of_day == 18
+
+
+def test_get_month_of_year():
+    geospatial_manager = GeospatialManager()
+    local_hour_of_day = geospatial_manager.get_month_of_year(
+        iso_time="2026-01-26T20:35:00Z",
+        latitude=51.508742,
+        longitude=-30.410156,
+    )
+    assert local_hour_of_day == 1

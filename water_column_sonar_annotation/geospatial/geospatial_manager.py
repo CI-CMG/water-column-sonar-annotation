@@ -66,7 +66,7 @@ class GeospatialManager:
         local_time = utc.astimezone(to_zone)
         return local_time.isoformat()  # [:19]
 
-    def get_hour_of_day(
+    def get_local_hour_of_day(
         self,
         iso_time: str = "2026-01-26T20:35:00Z",
         latitude: float = 51.508742,
@@ -81,8 +81,16 @@ class GeospatialManager:
 
     def get_month_of_year(
         self,
+        iso_time: str = "2026-01-26T20:35:00Z",
+        latitude: float = 51.508742,
+        longitude: float = -30.410156,
     ):
-        pass
+        local_time = self.get_local_time(
+            iso_time=iso_time,
+            latitude=latitude,
+            longitude=longitude,
+        )
+        return int(local_time[5:7])
 
 
 #
