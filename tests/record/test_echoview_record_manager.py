@@ -120,29 +120,41 @@ atlantic_herring
 
 def test_process_evr_record_possible_herring():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record(evr_record=possible_herring_example)
+    echoview_record_manager.process_evr_record(
+        evr_record=possible_herring_example, filename="test.evr"
+    )
 
 
 def test_process_evr_record_fish_school():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record(evr_record=fish_school_example)
+    echoview_record_manager.process_evr_record(
+        evr_record=fish_school_example, filename="test.evr"
+    )
 
 
 def test_process_evr_record_unclassified_regions():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record(evr_record=unclassified_regions_example)
+    echoview_record_manager.process_evr_record(
+        evr_record=unclassified_regions_example, filename="test.evr"
+    )
 
 
 def test_process_evr_record_krill_schools():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record(evr_record=krill_schools_example)
+    echoview_record_manager.process_evr_record(
+        evr_record=krill_schools_example, filename="test.evr"
+    )
 
 
 def test_process_evr_record_ah_school_1():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record(evr_record=ah_school_example1)
+    echoview_record_manager.process_evr_record(
+        evr_record=ah_school_example1, filename="test.evr"
+    )
 
 
 def test_process_evr_record_ah_school_2():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record(evr_record=ah_school_example2)
+    echoview_record_manager.process_evr_record(
+        evr_record=ah_school_example2, filename="test.evr"
+    )
