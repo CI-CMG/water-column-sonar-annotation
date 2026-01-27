@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 
 from water_column_sonar_annotation.cruise import CruiseManager
@@ -22,3 +23,12 @@ def test_get_cruise(process_cruise_path, tmp_path):
     cruise_manager = CruiseManager()
     cruise = cruise_manager.get_cruise()
     assert len(cruise.Sv.shape) == 3
+
+
+def test_get_time_depth():
+    cruise_manager = CruiseManager()
+    depth_value = cruise_manager.get_time_depth(
+        start_time="2019-10-16T16:20:00",
+        end_time="2019-10-16T16:50:00",
+    )
+    assert np.isclose(depth_value, 96.356674)

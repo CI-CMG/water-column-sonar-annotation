@@ -46,8 +46,8 @@ class EchoviewRecordManager:
         self.evr_region_classifications = [
             "possible_herring",
             "fish_school",
-            "Unclassified regions",
-            "krill_schools",
+            "Unclassified regions",  # TODO: exclude
+            "krill_schools",  # TODO: exclude
             "AH_School",
         ]
         # #
@@ -129,8 +129,9 @@ class EchoviewRecordManager:
         # evr_region_name = # String
         pass
 
+    @staticmethod
     def process_point_data(self, point_data):
-        foo = list(self.chunks(point_data, 3))
+        foo = list(chunks(point_data, 3))
         print(foo)
         return foo
 
@@ -263,27 +264,9 @@ class EchoviewRecordManager:
             # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
             evr_region_type = [x for x in record_lines[-2].split(" ") if x][-1]
             print(f"Region type: {self.region_type[evr_region_type]}")
-            #
             # String
             evr_region_name = record_lines[-1]
             print(f"Region name: {evr_region_name}")
-            #
-            # upper_left = [
-            #     converted_time_start,
-            #     float(bbox_split[9]),
-            # ]  # [x_min, y_min]
-            # bottom_right = [
-            #     converted_time_end,
-            #     float(bbox_split[12]),
-            # ]  # [x_max, y_max]
-            # # bounding_box = record_split[0]  # TODO: get box
-            # # polygon_label = record_split[-3]
-            # print(f"bounding box: {upper_left}, {bottom_right}")
-            # ##########################################
-            # ############# get data label #############
-            # data_label = record_lines[-3]
-            # print(data_label)
-            # #######################################
             # ############# get polygon #############
             # polygon_data = record_lines[-2]
             # print(polygon_data)
@@ -309,12 +292,7 @@ class EchoviewRecordManager:
             #     time=converted_time, method="nearest"
             # )
             # also need ping_time_index?
-
             #############  #############
-            #############  #############
-            # print(
-            #     f"time: {converted_time}, label: {polygon_label}"
-            # )
             print("______________________________________done reading")
         except Exception as e:
             print(f"Problem with process_evr_record: {e}")
@@ -361,32 +339,7 @@ class EchoviewRecordManager:
 
 labels_with_extra_data = ["fish_school", "krill_schools", "AH_School"]
 
-"""
-13 12 1 0 2 -1 1 20190925 2053458953  9.2818 20190925 2054119318  11.5333
-0
-0
-Unclassified regions
-20190925 2053458953 9.6034489515 20190925 2053521545 11.1197829964 20190925 2054046730 11.5333286451 20190925 2054064248 11.5333286451 20190925 2054079263 11.4414296120 20190925 2054116810 10.8440858974 20190925 2054119318 10.4764897652 20190925 2054116810 9.6953479845 20190925 2054111800 9.4196508854 20190925 2054091775 9.2818023359 20190925 2054076760 9.2818023359 20190925 2053483995 9.5574994350 0
-100
 
-13 52 26 0 7 -1 1 20191016 1851472920  142.7737148547 20191016 1851573110  147.8358025219
-0
-10
-School detected with:
-Minimum data threshold:  -66.00
-Maximum data threshold: (none)
-Distance mode: GPS distance
-Minimum total school height (meters):   4.00
-Minimum candidate length (meters):   1.00
-Minimum candidate height (meters):   2.00
-Maximum vertical linking distance (meters):   2.00
-Maximum horizontal linking distance (meters):  20.00
-Minimum total school length (meters):   4.00
-AH_School
-20191016 1851472920 143.9418889317 20191016 1851472920 144.3312802907 20191016 1851482694 144.3312802907 20191016 1851482945 144.3361476827 20191016 1851482945 145.4945869758 20191016 1851482694 145.4994543678 20191016 1851472920 145.4994543678 20191016 1851472920 145.6941500473 20191016 1851482694 145.6941500473 20191016 1851482945 145.6990174393 20191016 1851482945 146.6676284448 20191016 1851492970 146.6676284448 20191016 1851492970 146.4729327653 20191016 1851502740 146.4729327653 20191016 1851502990 146.4778001573 20191016 1851502990 147.0570198039 20191016 1851522770 147.0570198039 20191016 1851523020 147.0618871959 20191016 1851523020 147.4464111629 20191016 1851533040 147.4464111629 20191016 1851533040 147.2517154834 20191016 1851542805 147.2517154834 20191016 1851543055 147.2565828754 20191016 1851543055 147.4464111629 20191016 1851552820 147.4464111629 20191016 1851553070 147.4512785549 20191016 1851553070 147.8358025219 20191016 1851563090 147.8358025219 20191016 1851563090 147.6411068424 20191016 1851573110 147.6411068424 20191016 1851573110 147.0570198039 20191016 1851563090 147.0570198039 20191016 1851563090 146.4729327653 20191016 1851573110 146.4729327653 20191016 1851573110 145.4994543678 20191016 1851563090 145.4994543678 20191016 1851563090 144.7206716498 20191016 1851553070 144.7206716498 20191016 1851553070 143.9418889317 20191016 1851543055 143.9418889317 20191016 1851543055 143.1631062137 20191016 1851533040 143.1631062137 20191016 1851533040 142.9684105342 20191016 1851523020 142.9684105342 20191016 1851523020 142.7737148547 20191016 1851513005 142.7737148547 20191016 1851513005 143.3529345012 20191016 1851512755 143.3578018932 20191016 1851482945 143.3578018932 20191016 1851482945 143.7423258602 20191016 1851482694 143.7471932522 20191016 1851472920 143.7471932522 1
-Region 26
-"""
-#
 # if __name__ == "__main__":
 #     try:
 #         echoview_record_manager = EchoviewRecordManager()
