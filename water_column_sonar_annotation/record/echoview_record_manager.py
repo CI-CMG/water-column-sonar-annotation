@@ -1,7 +1,9 @@
+import itertools
 from os import listdir
 from os.path import isfile, join
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 """
@@ -11,7 +13,7 @@ https://support.echoview.com/WebHelp/Reference/File_Formats/Export_File_Formats/
 
 
 def chunks(lst, n):
-    """Yield successive n-sized chunks from lst."""
+    """Yield strings from n-sized chunks from lst."""
     for i in range(0, len(lst), n):
         # yield lst[i:i + n]
         yield " ".join(lst[i : i + n])
@@ -20,7 +22,6 @@ def chunks(lst, n):
 class EchoviewRecordManager:
     def __init__(
         self,
-        # endpoint_url: Optional[str] = None,
     ):
         print("__init__ called")
         self.region_creation_type = {  # Data formats — The region creation type is one of the following
@@ -50,6 +51,7 @@ class EchoviewRecordManager:
             "krill_schools",  # TODO: exclude
             "AH_School",
         ]
+        self.all_records_df = pd.DataFrame(columns=["A", "B", "C"])
 
     def __enter__(self):
         print("__enter__ called")
@@ -85,16 +87,27 @@ class EchoviewRecordManager:
     #  [2] write df to parquet and tag as github resource
 
     @staticmethod
-    def process_temporal_string(
-        date_string: str = None,
-        time_string: str = None,
+    def process_datetime_string(
+        date_string: str,
+        time_string: str,
     ):
         """Returns time in UTC from strings '20190925' and '2053458953'"""
         return pd.to_datetime(f"{date_string} {time_string}", format="%Y%m%d %H%M%S%f")
 
+    def process_vertice(
+        self,
+        date_string: str,
+        time_string: str,
+        depth: float,
+    ) -> tuple:
+        dt = self.process_datetime_string(date_string, time_string)
+        print(dt.value)  # is epoch time in nanoseconds
+        return dt, dt.value, np.round(depth, 2)
+
     def process_evr_record(
         self,
-        evr_record: str = None,
+        evr_record: str,
+        filename: str,
     ):
         try:
             ####################################
@@ -151,13 +164,13 @@ class EchoviewRecordManager:
             if evr_bounding_rectangle_calculated == "1":
                 # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
                 # '20190925 2053458953' <-- TODO: format into datetime
-                evr_left_x_value_of_bounding_rectangle = self.process_temporal_string(
+                evr_left_x_value_of_bounding_rectangle = self.process_datetime_string(
                     bbox_split[7], bbox_split[8]
                 )
                 # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
                 evr_top_y_value_of_bounding_rectangle = float(bbox_split[9])
                 # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-                evr_right_x_value_of_bounding_rectangle = self.process_temporal_string(
+                evr_right_x_value_of_bounding_rectangle = self.process_datetime_string(
                     bbox_split[10], bbox_split[11]
                 )
                 # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
@@ -166,14 +179,14 @@ class EchoviewRecordManager:
                 print(evr_top_y_value_of_bounding_rectangle)
                 print(evr_right_x_value_of_bounding_rectangle)
                 print(evr_bottom_y_value_of_bounding_rectangle)
-                # make sure times are in-order
+                # making sure times are in-order
                 if (
                     evr_left_x_value_of_bounding_rectangle
                     > evr_right_x_value_of_bounding_rectangle
                 ):
                     raise Exception("Timestamps out of order!")
-            offset_index = 0
             #
+            offset_index = 0
             # The number of lines of region notes to follow.
             evr_number_of_lines_of_notes = int(record_lines[1])
             print(f"Number of region notes: {evr_number_of_lines_of_notes}")
@@ -211,6 +224,15 @@ class EchoviewRecordManager:
             evr_points = [x for x in record_lines[-2].split(" ") if x][:-1]
             print(f"EVR points: {evr_points}")  # TODO: strip last entry
             #
+            evr_point_chunks = list(itertools.batched(evr_points, 3))
+            for evr_point_chunk in evr_point_chunks:
+                processed_point = self.process_vertice(
+                    date_string=evr_point_chunk[0],
+                    time_string=evr_point_chunk[1],
+                    depth=float(evr_point_chunk[2]),
+                )
+                print(processed_point)
+            #
             if len(evr_points) != evr_point_count * 3:
                 raise Exception("EVR point count does not match expected.")
             #
@@ -220,34 +242,30 @@ class EchoviewRecordManager:
             # String
             evr_region_name = record_lines[-1]
             print(f"Region name: {evr_region_name}")
-            # ############# get polygon #############
-            # polygon_data = record_lines[-2]
-            # print(polygon_data)
-            # #
-            # # [1] break up polygon
-            # if True:
-            #     evr = EchoviewRecordManager()
-            #     polygon_region = evr.process_point_data(polygon_data.split(" "))
-            #     print(polygon_region)
             #
-            # [3] convert each point
+            print(f"Filename: {filename}")
+            # TODO:
+            # start_time
+            # end_time
+            # min_depth
+            # max_depth
+            # polygon????
+            # altitude
+            # latitude
+            # longitude
+            # ship
+            # cruise
+            # sensor
+            # local time
+            # distance from shore
+            # solar azimuth
+            # is_daytime
+            # int month
+            # provenance
             #
-            # [4] piece it together -> wind clockwise
-            # polygon_vertices = record_split[-2]
-            # all_vertices = list(
-            #     zip(*[iter(polygon_vertices.split(" "))] * 3)
-            # )  # date time depth
-            # TODO: iterate vertices and format
-            # for vertice in all_vertices:
-            #    create time & depth annotation
-            # combined_polygon = []
-            # closest_latitude = opened_cruise.latitude.sel(
-            #     time=converted_time, method="nearest"
-            # )
-            #############  #############
-            print("______________________________________done reading")
-        except Exception as e:
-            print(f"Problem with process_evr_record: {e}")
+            print("______________________________________done reading_+_+_+_+_+_+_+_+")
+        except Exception as process_evr_record_exception:
+            print(f"Problem with process_evr_record: {process_evr_record_exception}")
 
     def process_evr_file(
         self,
@@ -262,11 +280,11 @@ class EchoviewRecordManager:
             records = lines.split("\n\n")
             records = [i for i in records if i.startswith("13 ")]  # filter
             for evr_record in records:
-                self.process_evr_record(evr_record=evr_record)
-        except Exception as e:
-            print(e)
-        finally:
-            print("done processing file")
+                self.process_evr_record(evr_record=evr_record, filename=evr_filename)
+        except Exception as process_evr_file_exception:
+            print(
+                f"Problem processing file {evr_filename}: {process_evr_file_exception}"
+            )
 
     def process_evr_directory(self, evr_directory_path="../../data/HB201906/"):
         """Open evr directory and start to parse files"""
@@ -283,20 +301,20 @@ class EchoviewRecordManager:
                     evr_file_path=evr_directory_path, evr_filename=evr_file
                 )
             # I don't have the lat/lon information to draw here... need to query the zarr store...
-        except Exception as e123:
-            print(f"Exception encountered processing evr directory: {e123}")
-        finally:
-            print("done processing evr directory")
+        except Exception as process_evr_directory_exception:
+            print(
+                f"Problem processing evr directory: {process_evr_directory_exception}"
+            )
 
 
-# if __name__ == "__main__":
-#     try:
-#         echoview_record_manager = EchoviewRecordManager()
-#         echoview_record_manager.process_evr_directory(
-#             evr_directory_path="../../data/HB201906/"
-#         )
-#     except Exception as e:
-#         print(e)
+if __name__ == "__main__":
+    try:
+        echoview_record_manager = EchoviewRecordManager()
+        echoview_record_manager.process_evr_directory(
+            evr_directory_path="../../data/HB201906/"
+        )
+    except Exception as e:
+        print(e)
 
 
 # Example of polygon

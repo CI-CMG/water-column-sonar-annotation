@@ -1,6 +1,6 @@
 import pytest
 
-from water_column_sonar_annotation.echoview_record import EchoviewRecordManager
+from water_column_sonar_annotation.record import EchoviewRecordManager
 
 
 #######################################################

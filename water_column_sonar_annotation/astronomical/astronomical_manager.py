@@ -10,9 +10,9 @@ class AstronomicalManager:
         self.DECIMAL_PRECISION = 6
         # https://github.com/CI-CMG/water-column-sonar-annotation/issues/6
         self.SUNRISE_DEGREES = 0.0
-        self.CIVIL_DAWN_DEGREES = 6.0
-        self.NAUTICAL_DAWN_DEGREES = 12.0
-        self.ASTRONOMICAL_DAWN_DEGREES = 18.0
+        self.CIVIL_TWILIGHT_DEGREES = 6.0
+        self.NAUTICAL_TWILIGHT_DEGREES = 12.0  # Requested metric to calculate
+        self.ASTRONOMICAL_TWILIGHT_DEGREES = 18.0
 
     @staticmethod
     def get_solar_azimuth(
@@ -55,15 +55,18 @@ class AstronomicalManager:
         Going to need to verify the az is correctly computed
         """
         solar_azimuth = self.get_solar_azimuth(iso_time, latitude, longitude)
-        if (solar_azimuth < (180.0 + self.NAUTICAL_DAWN_DEGREES)) & (
-            solar_azimuth > (0.0 - self.NAUTICAL_DAWN_DEGREES)
+        twilight_measurement = self.NAUTICAL_TWILIGHT_DEGREES
+        if (solar_azimuth < (180.0 + twilight_measurement)) & (
+            solar_azimuth > (0.0 - twilight_measurement)
         ):
             return True
         return False
 
-    def get_moon_phase(self):
-        # TODO: add method for getting the moon phase
-        pass
+    # def get_moon_phase(self):
+    #     # TODO: add method for getting the moon phase
+    #     pass
+
+    # TODO: calculate moonrise and moonset
 
 
 # if __name__ == "__main__":

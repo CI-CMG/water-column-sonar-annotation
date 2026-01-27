@@ -60,7 +60,7 @@ def test_is_daylight_at_sunset_before_and_after():
     )
     assert is_daylight
 
-    astronomical_manager = AstronomicalManager()
+    # an hour'ish later is nautical sunset
     is_daylight_before_nautical_sunset = astronomical_manager.is_daylight(
         iso_time="2026-01-28T01:16:00Z",  # sunset @5:13pm, nautical sunset @6:16pm
         latitude=39.9674884,  # Boulder
@@ -85,6 +85,7 @@ def test_is_daylight_at_sunrise_before_and_after():
     )
     assert is_daylight_at_sunrise
 
+    # about an hour before is nautical sunrise
     is_daylight_before_nautical_sunrise = astronomical_manager.is_daylight(
         iso_time="2026-01-27T13:12:00Z",  # sunrise @7:13am, nautical sunrise @6:12am
         latitude=39.9674884,  # Boulder
