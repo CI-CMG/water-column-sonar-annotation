@@ -1,14 +1,12 @@
 from os import listdir
 from os.path import isfile, join
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
-import xarray as xr
 
 """
+Documentation for echoview record EVR files:
 https://support.echoview.com/WebHelp/Reference/File_Formats/Export_File_Formats/2D_Region_definition_file_format.htm
-
 """
 
 
@@ -45,44 +43,51 @@ class EchoviewRecordManager:
             "3": "fishtracks",
             "4": "bad (empty water)",
         }
-        #
-        self.region_structure_version = None  # "13" (will be incremented if the region structure changes in future versions)
-        self.point_count = None  # Number of points in the region
-        self.region_id = None  # # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
-        self.selected = None  # "0" (always)
-        self.region_creation_type = None  # See "Data formats" definition
-        self.dummy = None  # Should always be "-1"
-        self.bounding_rectangle_calculated = (
-            None  # "1" if the next four fields are valid; "0" otherwise
-        )
-        self.left_x_value_of_bounding_rectangle: Optional[str] = (
-            None  # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        )
-        self.top_y_value_of_bounding_rectangle: Optional[str] = (
-            None  # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        )
-        self.right_x_value_of_bounding_rectangle: Optional[str] = (
-            None  # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        )
-        self.bottom_y_value_of_bounding_rectangle: Optional[str] = (
-            None  # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        )
-        self.number_of_lines_of_notes = (
-            None  # The number of lines of region notes to follow.
-        )
-        self.region_notes: Optional[str] = (
-            None  # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
-        )
-        self.number_of_lines_of_detection_settings = (
-            None  # The number of lines of detection settings to follow.
-        )
-        self.region_detection_settings: Optional[str] = (
-            None  # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
-        )
-        self.region_classification = None  # Region classification (string). Default value is "Unclassified regions"
-        self.points = None  # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
-        self.region_type = None  # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
-        self.region_name = None  # String
+        self.evr_region_classifications = [
+            "possible_herring",
+            "fish_school",
+            "Unclassified regions",
+            "krill_schools",
+            "AH_School",
+        ]
+        # #
+        # self.region_structure_version = None  # "13" (will be incremented if the region structure changes in future versions)
+        # self.point_count = None  # Number of points in the region
+        # self.region_id = None  # # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
+        # self.selected = None  # "0" (always)
+        # self.region_creation_type = None  # See "Data formats" definition
+        # self.dummy = None  # Should always be "-1"
+        # self.bounding_rectangle_calculated = (
+        #     None  # "1" if the next four fields are valid; "0" otherwise
+        # )
+        # self.left_x_value_of_bounding_rectangle: Optional[str] = (
+        #     None  # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        # )
+        # self.top_y_value_of_bounding_rectangle: Optional[str] = (
+        #     None  # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        # )
+        # self.right_x_value_of_bounding_rectangle: Optional[str] = (
+        #     None  # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        # )
+        # self.bottom_y_value_of_bounding_rectangle: Optional[str] = (
+        #     None  # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+        # )
+        # self.number_of_lines_of_notes = (
+        #     None  # The number of lines of region notes to follow.
+        # )
+        # self.region_notes: Optional[str] = (
+        #     None  # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
+        # )
+        # self.number_of_lines_of_detection_settings = (
+        #     None  # The number of lines of detection settings to follow.
+        # )
+        # self.region_detection_settings: Optional[str] = (
+        #     None  # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
+        # )
+        # self.region_classification = None  # Region classification (string). Default value is "Unclassified regions"
+        # self.points = None  # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
+        # self.region_type = None  # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
+        # self.region_name = None  # String
 
     def __enter__(self):
         print("__enter__ called")
@@ -91,6 +96,7 @@ class EchoviewRecordManager:
     def __exit__(self, *a):
         print("__exit__ called")
 
+    # TODO: maybe remove?
     def ingest_region(self, region):
         """
         TODO: ingest a record, get the bbox, polygon, and label
@@ -128,50 +134,38 @@ class EchoviewRecordManager:
         print(foo)
         return foo
 
+    @staticmethod
+    def process_temporal_string(
+        date_string: str = None,
+        time_string: str = None,
+    ):
+        """Returns time in UTC from ['20190925', '2053458953']"""
+        return pd.to_datetime(f"{date_string} {time_string}", format="%Y%m%d %H%M%S%f")
 
-def open_evr_file():  # model_cruise):
-    """
-    Open evr file and create records for each entry
-    # :param model_cruise:
-    :return:
-    """
-    # print(model_cruise)
-    mypath = "../data/HB201906/"
-    all_evr_files = [
-        f
-        for f in listdir(mypath)
-        if isfile(join(mypath, f)) and Path(f).suffix == ".evr"
-    ]
-    all_evr_files.sort()
-    for evr_file in all_evr_files:
-        print(evr_file)
-        with open(mypath + evr_file, "r") as file:
-            lines = file.read()
-        records = lines.split("\n\n")
-        #
-        #
-        #
-        records = [i for i in records if i.startswith("13 ")]  # filter
-        for record in records:
-            print("_+_+_+_+ start new record _+_+_+")
-            record_lines = record.split("\n")
+    def process_evr_record(
+        self,
+        evr_record: str = None,
+    ):
+        try:
+            # print(evr_record)
+            record_lines = [x for x in evr_record.split("\n") if x]
             ####################################
             ############# get bbox #############
             bbox_split = record_lines[0].split()  # [x for x in record.split() if x]
-            ###
+            #########################################################
             # https://support.echoview.com/WebHelp/Reference/File_Formats/Export_File_Formats/2D_Region_definition_file_format.htm
-            # evr_region_structure_version = bbox_split[0] # "13" (will be incremented if the region structure changes in future versions)
-            # evr_point_count = bbox_split[1] # Number of points in the region
-            # evr_region_id = # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
-            # evr_selected = # "0" (always)
-            # evr_region_creation_type = # See "Data formats" definition
-            # evr_dummy = # Should always be "-1"
-            # evr_bounding_rectangle_calculated = # "1" if the next four fields are valid; "0" otherwise
-            # evr_left_x_value_of_bounding_rectangle = # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-            # evr_top_y_value_of_bounding_rectangle = # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-            # evr_right_x_value_of_bounding_rectangle = # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-            # evr_bottom_y_value_of_bounding_rectangle = # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-            # evr_number_of_lines_of_notes = # The number of lines of region notes to follow.
+            # _evr_region_structure_version = bbox_split[0] # "13" (will be incremented if the region structure changes in future versions)
+            # _evr_point_count = bbox_split[1] # Number of points in the region
+            # _evr_region_id = # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
+            # _evr_selected = # "0" (always)
+            # _evr_region_creation_type = # See "Data formats" definition
+            # _evr_dummy = # Should always be "-1"
+            # _evr_bounding_rectangle_calculated = # "1" if the next four fields are valid; "0" otherwise
+            # _evr_left_x_value_of_bounding_rectangle = # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+            # _evr_top_y_value_of_bounding_rectangle = # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+            # _evr_right_x_value_of_bounding_rectangle = # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+            # _evr_bottom_y_value_of_bounding_rectangle = # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+            # _evr_number_of_lines_of_notes = # The number of lines of region notes to follow.
             # evr_region_notes = # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
             # evr_number_of_lines_of_detection_settings = # The number of lines of detection settings to follow.
             # evr_region_detection_settings = # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
@@ -179,38 +173,126 @@ def open_evr_file():  # model_cruise):
             # evr_points = # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
             # evr_region_type = # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
             # evr_region_name = # String
-            ###
+            #########################################################
+            evr_region_structure_version = bbox_split[0]
+            if evr_region_structure_version != "13":
+                raise Exception("EVR Region Structure Version must be 13")
             #
-            ###
-            time_start = bbox_split[7:9]  # bbox start time
-            time_end = bbox_split[10:12]  # bbox end time
-            # TODO: assert length
-            # 13 12 1 0 2 -1 1 20190925 2053458953  9.2818 20190925 2054119318  11.5333
-            converted_time_start = pd.to_datetime(
-                f"{time_start[0]}T{time_start[1]}", format="%Y%m%dT%H%M%S%f"
-            )
-            converted_time_end = pd.to_datetime(
-                f"{time_end[0]}T{time_end[1]}", format="%Y%m%dT%H%M%S%f"
-            )
-            upper_left = [converted_time_start, float(bbox_split[9])]  # [x_min, y_min]
-            bottom_right = [converted_time_end, float(bbox_split[12])]  # [x_max, y_max]
-            # bounding_box = record_split[0]  # TODO: get box
-            # polygon_label = record_split[-3]
-            print(f"bounding box: {upper_left}, {bottom_right}")
-            ##########################################
-            ############# get data label #############
-            data_label = record_lines[-3]
-            print(data_label)
-            #######################################
-            ############# get polygon #############
-            polygon_data = record_lines[-2]
-            print(polygon_data)
+            evr_point_count = int(bbox_split[1])
+            print(f"EVR Point Count: {evr_point_count}")
             #
-            # [1] break up polygon
-            if True:
-                evr = EchoviewRecordManager()
-                polygon_region = evr.process_point_data(polygon_data.split(" "))
-                print(polygon_region)
+            evr_region_id = int(bbox_split[2])
+            print(f"EVR Region: {evr_region_id}")
+            #
+            evr_selected = bbox_split[3]
+            if evr_selected != "0":
+                raise Exception("EVR Selected must be 13")
+            #
+            evr_region_creation_type = bbox_split[4]  # See "Data formats" definition
+            print(
+                f"Region creation type: {self.region_creation_type[evr_region_creation_type]}"
+            )
+            #
+            evr_dummy = bbox_split[5]  # Should always be "-1"
+            if evr_dummy != "-1":
+                raise Exception("EVR Dummy Should always be -1")
+            #
+            # "1" if the next four fields are valid; "0" otherwise
+            evr_bounding_rectangle_calculated = bbox_split[6]
+            if evr_bounding_rectangle_calculated == "1":
+                # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+                # '20190925 2053458953' <-- TODO: format into datetime
+                evr_left_x_value_of_bounding_rectangle = self.process_temporal_string(
+                    bbox_split[7], bbox_split[8]
+                )
+                # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+                evr_top_y_value_of_bounding_rectangle = float(bbox_split[9])
+                # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+                evr_right_x_value_of_bounding_rectangle = self.process_temporal_string(
+                    bbox_split[10], bbox_split[11]
+                )
+                # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+                evr_bottom_y_value_of_bounding_rectangle = float(bbox_split[12])
+                print(evr_left_x_value_of_bounding_rectangle)
+                print(evr_top_y_value_of_bounding_rectangle)
+                print(evr_right_x_value_of_bounding_rectangle)
+                print(evr_bottom_y_value_of_bounding_rectangle)
+            # TODO: make sure times are in-order!!!
+            offset_index = 0
+            #
+            # The number of lines of region notes to follow.
+            evr_number_of_lines_of_notes = int(record_lines[1])
+            print(f"Number of region notes: {evr_number_of_lines_of_notes}")
+            # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
+            if evr_number_of_lines_of_notes > 0:
+                offset_index = offset_index + evr_number_of_lines_of_notes + 1
+                evr_region_notes = record_lines[1:offset_index]
+                print(f"Region notes: {evr_region_notes}")
+            #
+            # The number of lines of detection settings to follow.
+            evr_number_of_lines_of_detection_settings = int(
+                record_lines[2 + offset_index]
+            )
+            print(
+                f"Number of lines of detection settings: {evr_number_of_lines_of_detection_settings}"
+            )
+            # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
+            if evr_number_of_lines_of_detection_settings > 0:
+                offset_index = (
+                    evr_number_of_lines_of_notes
+                    + evr_number_of_lines_of_detection_settings
+                    + 3
+                )
+                evr_region_detection_settings = record_lines[3:offset_index]
+                print(f"Region detection settings: {evr_region_detection_settings}")
+            #
+            # Region classification (string). Default value is "Unclassified regions"
+            evr_region_classification = record_lines[-3]
+            if evr_region_classification not in self.evr_region_classifications:
+                raise Exception(
+                    f"Problem, unknown region classification: {evr_region_classification}"
+                )
+            print(f"Region classification: {evr_region_classification}")
+            # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
+            evr_points = [x for x in record_lines[-2].split(" ") if x][:-1]
+            print(f"EVR points: {evr_points}")  # TODO: strip last entry
+            #
+            if len(evr_points) != evr_point_count * 3:
+                raise Exception("EVR point count does not match expected.")
+            #
+            # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
+            evr_region_type = [x for x in record_lines[-2].split(" ") if x][-1]
+            print(f"Region type: {self.region_type[evr_region_type]}")
+            #
+            # String
+            evr_region_name = record_lines[-1]
+            print(f"Region name: {evr_region_name}")
+            #
+            # upper_left = [
+            #     converted_time_start,
+            #     float(bbox_split[9]),
+            # ]  # [x_min, y_min]
+            # bottom_right = [
+            #     converted_time_end,
+            #     float(bbox_split[12]),
+            # ]  # [x_max, y_max]
+            # # bounding_box = record_split[0]  # TODO: get box
+            # # polygon_label = record_split[-3]
+            # print(f"bounding box: {upper_left}, {bottom_right}")
+            # ##########################################
+            # ############# get data label #############
+            # data_label = record_lines[-3]
+            # print(data_label)
+            # #######################################
+            # ############# get polygon #############
+            # polygon_data = record_lines[-2]
+            # print(polygon_data)
+            # #
+            # # [1] break up polygon
+            # if True:
+            #     evr = EchoviewRecordManager()
+            #     polygon_region = evr.process_point_data(polygon_data.split(" "))
+            #     print(polygon_region)
             #
             # [3] convert each point
             #
@@ -233,165 +315,51 @@ def open_evr_file():  # model_cruise):
             # print(
             #     f"time: {converted_time}, label: {polygon_label}"
             # )
-            print("done reading")
-            print("\n")
+            print("______________________________________done reading")
+        except Exception as e:
+            print(f"Problem with process_evr_record: {e}")
 
-    # I don't have the lat/lon information to draw here... need to query the zarr store...
-
-    print("done")
-
-
-labels = [
-    "possible_herring",
-    "fish_school",
-    "Unclassified regions",
-    "krill_schools",
-    "AH_School",
-]
-labels_with_extra_data = ["fish_school", "krill_schools", "AH_School"]
-record_header = """EVRG 7 11.0.244.39215
-11"""
-
-possible_herring_example = """13 4 7 0 3 -1 1 20190925 2247242130  24.1290795746 20190925 2247362460  35.1668500183
-0
-0
-possible_herring
-20190925 2247242130 24.1290795746 20190925 2247242130 35.1668500183 20190925 2247362460 35.1668500183 20190925 2247362460 24.1290795746 1
-100"""
-
-fish_school_example = """13 30 8 0 7 -1 1 20190925 1749451605  20.2800268439 20190925 1749501645  26.3028953087
-0
-10
-School detected with:
-Minimum data threshold:  -66.00
-Maximum data threshold: (none)
-Distance mode: GPS distance
-Minimum total school height (meters):   4.00
-Minimum candidate length (meters):   1.00
-Minimum candidate height (meters):   2.00
-Maximum vertical linking distance (meters):   2.00
-Maximum horizontal linking distance (meters):  20.00
-Minimum total school length (meters):   4.00
-fish_school
-20190925 1749451605 22.0286015595 20190925 1749451605 25.1371788317 20190925 1749461355 25.1371788317 20190925 1749461605 25.1420359837 20190925 1749461605 25.7200370702 20190925 1749471370 25.7200370702 20190925 1749471620 25.7248942222 20190925 1749471620 26.1086092292 20190925 1749481385 26.1086092292 20190925 1749481635 26.1134663812 20190925 1749481635 26.3028953087 20190925 1749491640 26.3028953087 20190925 1749491640 25.1371788317 20190925 1749501645 25.1371788317 20190925 1749501645 24.5543205932 20190925 1749491640 24.5543205932 20190925 1749491640 24.3600345136 20190925 1749501645 24.3600345136 20190925 1749501645 21.6400294005 20190925 1749491640 21.6400294005 20190925 1749491640 21.0571711620 20190925 1749481635 21.0571711620 20190925 1749481635 20.2800268439 20190925 1749471620 20.2800268439 20190925 1749471620 20.8580279305 20190925 1749471370 20.8628850825 20190925 1749461605 20.8628850825 20190925 1749461605 21.8294583280 20190925 1749461355 21.8343154800 20190925 1749451605 21.8343154800 1
-Region 8"""
-
-unclassified_regions_example = """13 12 1 0 2 -1 1 20190925 2053458953  9.2818 20190925 2054119318  11.5333
-0
-0
-Unclassified regions
-20190925 2053458953 9.6034489515 20190925 2053521545 11.1197829964 20190925 2054046730 11.5333286451 20190925 2054064248 11.5333286451 20190925 2054079263 11.4414296120 20190925 2054116810 10.8440858974 20190925 2054119318 10.4764897652 20190925 2054116810 9.6953479845 20190925 2054111800 9.4196508854 20190925 2054091775 9.2818023359 20190925 2054076760 9.2818023359 20190925 2053483995 9.5574994350 0
-100"""
-
-krill_schools_example = """13 23 49 0 7 -1 1 20191020 0536541560  13.0000000000 20191020 0536591655  17.0000000000
-0
-10
-School detected with:
-Minimum data threshold:  -80.00
-Maximum data threshold: (none)
-Distance mode: GPS distance
-Minimum total school height (meters):   4.00
-Minimum candidate length (meters):   1.00
-Minimum candidate height (meters):   2.00
-Maximum vertical linking distance (meters):   2.00
-Maximum horizontal linking distance (meters):  20.00
-Minimum total school length (meters):   4.00
-krill_schools
-20191020 0536551605 15.0250000000 20191020 0536551605 17.0000000000 20191020 0536561605 17.0000000000 20191020 0536561605 16.0000000000 20191020 0536571635 16.0000000000 20191020 0536571635 15.0000000000 20191020 0536581405 15.0000000000 20191020 0536581655 15.0250000000 20191020 0536581655 16.0000000000 20191020 0536591655 16.0000000000 20191020 0536591655 15.0000000000 20191020 0536581655 15.0000000000 20191020 0536581655 14.0000000000 20191020 0536571635 14.0000000000 20191020 0536571635 13.0000000000 20191020 0536561605 13.0000000000 20191020 0536561605 14.9750000000 20191020 0536561355 15.0000000000 20191020 0536551605 15.0000000000 20191020 0536551605 14.0000000000 20191020 0536541560 14.0000000000 20191020 0536541560 15.0000000000 20191020 0536551355 15.0000000000 1
-Region 49"""
-
-ah_school_example = """13 5 23 0 7 -1 1 20191106 1314583780  25.3008882713 20191106 1314593790  30.2941528987
-0
-10
-School detected with:
-Minimum data threshold:  -66.00
-Maximum data threshold: (none)
-Distance mode: GPS distance
-Minimum total school height (meters):   4.00
-Minimum candidate length (meters):   1.00
-Minimum candidate height (meters):   2.00
-Maximum vertical linking distance (meters):   2.00
-Maximum horizontal linking distance (meters):  20.00
-Minimum total school length (meters):   4.00
-AH_School
-20191106 1314583780 25.4929369108 20191106 1314583780 30.2941528987 20191106 1314593790 30.2941528987 20191106 1314593790 25.3008882713 20191106 1314583780 25.3008882713 1
-Region 23"""
-
-# 20191106 1314583780 25.4929369108 # top-left
-# 20191106 1314583780 30.2941528987 # bottom-left
-# 20191106 1314593790 30.2941528987 # bottom-right
-# 20191106 1314593790 25.3008882713 # top-right
-# 20191106 1314583780 25.3008882713 1 # top-left'ish, ends with '1' ...goes counter-clockwise
-
-ah_school_example2 = """13 16 28 0 7 -1 1 20191106 1317305715  31.8305420148 20191106 1317335745  35.8635634446
-0
-10
-School detected with:
-Minimum data threshold:  -66.00
-Maximum data threshold: (none)
-Distance mode: GPS distance
-Minimum total school height (meters):   4.00
-Minimum candidate length (meters):   1.00
-Minimum candidate height (meters):   2.00
-Maximum vertical linking distance (meters):   2.00
-Maximum horizontal linking distance (meters):  20.00
-Minimum total school length (meters):   4.00
-AH_School
-20191106 1317315725 34.3319755445 20191106 1317315725 35.8635634446 20191106 1317325735 35.8635634446 20191106 1317325735 35.4794661656 20191106 1317335745 35.4794661656 20191106 1317335745 34.5192229680 20191106 1317325735 34.5192229680 20191106 1317325735 34.3271743285 20191106 1317335745 34.3271743285 20191106 1317335745 31.8305420148 20191106 1317315725 31.8305420148 20191106 1317315725 34.1303244730 20191106 1317315475 34.1351256890 20191106 1317305715 34.1351256890 20191106 1317305715 34.3271743285 20191106 1317315475 34.3271743285 1
-Region 28"""
-
-
-def open_zarr_store(
-    bucket_name="noaa-wcsd-zarr-pds",
-    level="level_2a",
-    ship_name="Henry_B._Bigelow",
-    cruise_name="HB1906",
-    sensor_name="EK60",
-):
-    try:
-        zarr_store = f"{cruise_name}.zarr"
-        store_path = f"s3://{bucket_name}/{level}/{ship_name}/{cruise_name}/{sensor_name}/{zarr_store}"
-        kwargs = {"consolidated": False}
-        return xr.open_dataset(
-            filename_or_obj=store_path,
-            engine="zarr",
-            storage_options={"anon": True},
-            **kwargs,
-        )
-    except Exception as e:
-        print(f"could not process cruise: {e}")
-
-
-class ShapeManager:
-    def __init__(
+    def process_evr_file(
         self,
+        evr_file_path: str = None,
+        evr_filename: str = None,
     ):
-        self.DEPTH_PRECISION = 4
+        try:
+            print(f"Filename: {evr_filename}")
+            with open(evr_file_path + evr_filename, "r") as file:
+                lines = file.read()
 
-    def point(
-        self,
-        date_string,
-        time_string,
-        depth_string,
-    ):  # -> returntype # TODO:
-        pass
+            records = lines.split("\n\n")
+            records = [i for i in records if i.startswith("13 ")]  # filter
+            for evr_record in records:
+                self.process_evr_record(evr_record=evr_record)
+        except Exception as e:
+            print(e)
+        finally:
+            print("done processing file")
 
-    def polygon(
-        self,
-        date_string,
-        time_string,
-        depth_string,
-    ):  # -> type # TODO:
-        pass
+    def process_evr_directory(self, evr_directory_path="../../data/HB201906/"):
+        """Open evr directory and start to parse files"""
+        try:
+            all_evr_files = [
+                f
+                for f in listdir(evr_directory_path)
+                if isfile(join(evr_directory_path, f)) and Path(f).suffix == ".evr"
+            ]
+            all_evr_files.sort()
+            print(f"Found {len(all_evr_files)} EVR files.")
+            for evr_file in all_evr_files:
+                self.process_evr_file(
+                    evr_file_path=evr_directory_path, evr_filename=evr_file
+                )
+            # I don't have the lat/lon information to draw here... need to query the zarr store...
+        except Exception as e123:
+            print(f"Exception encountered processing evr directory: {e123}")
+        finally:
+            print("done processing evr directory")
 
-    def bbox(
-        self,
-        date_string,
-        time_string,
-        depth_string,
-    ):  # -> returntype # TODO:
-        pass
 
+labels_with_extra_data = ["fish_school", "krill_schools", "AH_School"]
 
 """
 13 12 1 0 2 -1 1 20190925 2053458953  9.2818 20190925 2054119318  11.5333
@@ -421,8 +389,16 @@ Region 26
 #
 # if __name__ == "__main__":
 #     try:
-#         # get_solar_azimuth()
-#         # opened_cruise = open_zarr_store()
-#         # open_evr_file()  # opened_cruise)
+#         echoview_record_manager = EchoviewRecordManager()
+#         echoview_record_manager.process_evr_directory(
+#             evr_directory_path="../../data/HB201906/"
+#         )
 #     except Exception as e:
 #         print(e)
+
+
+# 20191106 1314583780 25.4929369108 # top-left
+# 20191106 1314583780 30.2941528987 # bottom-left
+# 20191106 1314593790 30.2941528987 # bottom-right
+# 20191106 1314593790 25.3008882713 # top-right
+# 20191106 1314583780 25.3008882713 1 # top-left'ish, ends with '1' ...goes counter-clockwise
