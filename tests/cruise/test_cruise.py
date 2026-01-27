@@ -26,8 +26,9 @@ def test_get_cruise(process_cruise_path, tmp_path):
 
 
 def test_get_time_depth():
+    """This only gets the depth over the interval, need to calculate the 'altitude'"""
     cruise_manager = CruiseManager()
-    depth_value = cruise_manager.get_time_depth(
+    depth_value = cruise_manager.get_depth(
         start_time="2019-10-16T16:20:00",
         end_time="2019-10-16T16:50:00",
     )

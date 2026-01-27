@@ -8,29 +8,27 @@ class AstronomicalManager:
         self,
     ):
         self.DECIMAL_PRECISION = 6
+        # https://github.com/CI-CMG/water-column-sonar-annotation/issues/6
+        self.SUNRISE_DEGREES = 0.0
+        self.CIVIL_DAWN_DEGREES = 6.0
+        self.NAUTICAL_DAWN_DEGREES = 12.0
+        self.ASTRONOMICAL_DAWN_DEGREES = 18.0
 
+    @staticmethod
     def get_solar_azimuth(
-        self,
         iso_time: str = "2026-01-26T00:06:00Z",
         latitude: float = 39.9674884,  # boulder gps coordinates
         longitude: float = -105.2532602,
-    ):
+    ) -> float:
         """
         Good reference for calculating: https://www.suncalc.org/#/39.9812,-105.2495,13/2026.01.26/11:52/1/3
         utc time now: '2026-01-25T18:42:00Z' # 11:43am
             7:14 am↑ (sunrise)
-                (Timestamp('2026-01-25 18:42:00+0000', tz='UTC'), Timestamp('2026-01-25 14:15:07.145030400+0000', tz='UTC')) # good
+                (Timestamp('2026-01-25 18:42:00+0000', tz='UTC'), Timestamp('2026-01-25 14:15:07.145030400+0000', tz='UTC'))
             5:13 pm↑ (sunset)
-                (Timestamp('2026-01-25 18:42:00+0000', tz='UTC'), Timestamp('2026-01-26 00:10:51.244243200+0000', tz='UTC')) # good'ish
+                (Timestamp('2026-01-25 18:42:00+0000', tz='UTC'), Timestamp('2026-01-26 00:10:51.244243200+0000', tz='UTC'))
             solar altitude should be: 31.26°, azimuth should be: 174.01°
-        :param iso_time: ISO8601 timestamp in string format
-        :param latitude: Latitude in decimal value
-        :param longitude: Longitude in decimal value
-        :return: Solar Altitude
         """
-        #
-        # TODO: pvlib.location.lookup_altitude
-        #
         solar_position = pvlib.solarposition.get_solarposition(
             time=pd.DatetimeIndex([iso_time]),
             latitude=latitude,
@@ -45,6 +43,23 @@ class AstronomicalManager:
         # )
         # Note: sunrise & sunset can be consolidated into altitude
         return elevation
+
+    def is_daylight(
+        self,
+        iso_time: str,
+        latitude: float,
+        longitude: float,
+    ) -> bool:
+        """
+        Returns whether the time/gps references a Nautical Daylight time
+        Going to need to verify the az is correctly computed
+        """
+        solar_azimuth = self.get_solar_azimuth(iso_time, latitude, longitude)
+        if (solar_azimuth < (180.0 + self.NAUTICAL_DAWN_DEGREES)) & (
+            solar_azimuth > (0.0 - self.NAUTICAL_DAWN_DEGREES)
+        ):
+            return True
+        return False
 
     def get_moon_phase(self):
         # TODO: add method for getting the moon phase

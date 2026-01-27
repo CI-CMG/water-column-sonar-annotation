@@ -33,7 +33,7 @@ class CruiseManager:
         except Exception as e:
             print(f"Could not open cruise: {e}")
 
-    def get_time_depth(
+    def get_depth(
         self,
         start_time="2019-10-16T16:20:00",
         end_time="2019-10-16T16:50:00",
@@ -54,6 +54,13 @@ class CruiseManager:
             return np.nanmin(bottom_depths)
         except Exception as e:
             print(f"Could not find depth: {e}")
+
+    def get_altitude(
+        self,
+        start_time="2019-10-16T16:20:00",
+        end_time="2019-10-16T16:50:00",
+    ):
+        pass
 
 
 # if __name__ == "__main__":

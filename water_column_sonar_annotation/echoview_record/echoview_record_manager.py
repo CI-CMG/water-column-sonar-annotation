@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 """
-Documentation for echoview record EVR files:
+Documentation for echoview record files in EVR format:
 https://support.echoview.com/WebHelp/Reference/File_Formats/Export_File_Formats/2D_Region_definition_file_format.htm
 """
 
@@ -46,48 +46,10 @@ class EchoviewRecordManager:
         self.evr_region_classifications = [
             "possible_herring",
             "fish_school",
-            "Unclassified regions",  # TODO: exclude
+            "Unclassified regions",  # TODO: per CWB continue to include this
             "krill_schools",  # TODO: exclude
             "AH_School",
         ]
-        # #
-        # self.region_structure_version = None  # "13" (will be incremented if the region structure changes in future versions)
-        # self.point_count = None  # Number of points in the region
-        # self.region_id = None  # # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
-        # self.selected = None  # "0" (always)
-        # self.region_creation_type = None  # See "Data formats" definition
-        # self.dummy = None  # Should always be "-1"
-        # self.bounding_rectangle_calculated = (
-        #     None  # "1" if the next four fields are valid; "0" otherwise
-        # )
-        # self.left_x_value_of_bounding_rectangle: Optional[str] = (
-        #     None  # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        # )
-        # self.top_y_value_of_bounding_rectangle: Optional[str] = (
-        #     None  # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        # )
-        # self.right_x_value_of_bounding_rectangle: Optional[str] = (
-        #     None  # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        # )
-        # self.bottom_y_value_of_bounding_rectangle: Optional[str] = (
-        #     None  # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        # )
-        # self.number_of_lines_of_notes = (
-        #     None  # The number of lines of region notes to follow.
-        # )
-        # self.region_notes: Optional[str] = (
-        #     None  # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
-        # )
-        # self.number_of_lines_of_detection_settings = (
-        #     None  # The number of lines of detection settings to follow.
-        # )
-        # self.region_detection_settings: Optional[str] = (
-        #     None  # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
-        # )
-        # self.region_classification = None  # Region classification (string). Default value is "Unclassified regions"
-        # self.points = None  # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
-        # self.region_type = None  # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
-        # self.region_name = None  # String
 
     def __enter__(self):
         print("__enter__ called")
@@ -96,51 +58,38 @@ class EchoviewRecordManager:
     def __exit__(self, *a):
         print("__exit__ called")
 
-    # TODO: maybe remove?
-    def ingest_region(self, region):
-        """
-        TODO: ingest a record, get the bbox, polygon, and label
-        #
-        Convert data to dataframe and save to parquet file compressed, 1-file
-        # TODO: tag & release
-        #
-        Need way to convert to geopandas?!
-        :param region:
-        :return:
-        """
-        # evr_region_structure_version = bbox_split[0] # "13" (will be incremented if the region structure changes in future versions)
-        # evr_point_count = bbox_split[1] # Number of points in the region
-        # evr_region_id = # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
-        # evr_selected = # "0" (always)
-        # evr_region_creation_type = # See "Data formats" definition
-        # evr_dummy = # Should always be "-1"
-        # evr_bounding_rectangle_calculated = # "1" if the next four fields are valid; "0" otherwise
-        # evr_left_x_value_of_bounding_rectangle = # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        # evr_top_y_value_of_bounding_rectangle = # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        # evr_right_x_value_of_bounding_rectangle = # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        # evr_bottom_y_value_of_bounding_rectangle = # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-        # evr_number_of_lines_of_notes = # The number of lines of region notes to follow.
-        # evr_region_notes = # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
-        # evr_number_of_lines_of_detection_settings = # The number of lines of detection settings to follow.
-        # evr_region_detection_settings = # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
-        # evr_region_classification = # Region classification (string). Default value is "Unclassified regions"
-        # evr_points = # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
-        # evr_region_type = # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
-        # evr_region_name = # String
-        pass
+    """
+    # evr_region_structure_version = bbox_split[0] # "13" (will be incremented if the region structure changes in future versions)
+    # evr_point_count = bbox_split[1] # Number of points in the region
+    # evr_region_id = # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
+    # evr_selected = # "0" (always)
+    # evr_region_creation_type = # See "Data formats" definition
+    # evr_dummy = # Should always be "-1"
+    # evr_bounding_rectangle_calculated = # "1" if the next four fields are valid; "0" otherwise
+    # evr_left_x_value_of_bounding_rectangle = # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+    # evr_top_y_value_of_bounding_rectangle = # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+    # evr_right_x_value_of_bounding_rectangle = # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+    # evr_bottom_y_value_of_bounding_rectangle = # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
+    # evr_number_of_lines_of_notes = # The number of lines of region notes to follow.
+    # evr_region_notes = # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
+    # evr_number_of_lines_of_detection_settings = # The number of lines of detection settings to follow.
+    # evr_region_detection_settings = # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
+    # evr_region_classification = # Region classification (string). Default value is "Unclassified regions"
+    # evr_points = # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
+    # evr_region_type = # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
+    # evr_region_name = # String
+    """
 
-    @staticmethod
-    def process_point_data(self, point_data):
-        foo = list(chunks(point_data, 3))
-        print(foo)
-        return foo
+    # TODO:
+    #  [1] write the records to a pandas dataframe
+    #  [2] write df to parquet and tag as github resource
 
     @staticmethod
     def process_temporal_string(
         date_string: str = None,
         time_string: str = None,
     ):
-        """Returns time in UTC from ['20190925', '2053458953']"""
+        """Returns time in UTC from strings '20190925' and '2053458953'"""
         return pd.to_datetime(f"{date_string} {time_string}", format="%Y%m%d %H%M%S%f")
 
     def process_evr_record(
@@ -148,9 +97,8 @@ class EchoviewRecordManager:
         evr_record: str = None,
     ):
         try:
-            # print(evr_record)
-            record_lines = [x for x in evr_record.split("\n") if x]
             ####################################
+            record_lines = [x for x in evr_record.split("\n") if x]
             ############# get bbox #############
             bbox_split = record_lines[0].split()  # [x for x in record.split() if x]
             #########################################################
@@ -167,13 +115,13 @@ class EchoviewRecordManager:
             # _evr_right_x_value_of_bounding_rectangle = # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
             # _evr_bottom_y_value_of_bounding_rectangle = # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
             # _evr_number_of_lines_of_notes = # The number of lines of region notes to follow.
-            # evr_region_notes = # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
-            # evr_number_of_lines_of_detection_settings = # The number of lines of detection settings to follow.
-            # evr_region_detection_settings = # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
-            # evr_region_classification = # Region classification (string). Default value is "Unclassified regions"
-            # evr_points = # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
-            # evr_region_type = # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
-            # evr_region_name = # String
+            # _evr_region_notes = # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
+            # _evr_number_of_lines_of_detection_settings = # The number of lines of detection settings to follow.
+            # _evr_region_detection_settings = # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
+            # _evr_region_classification = # Region classification (string). Default value is "Unclassified regions"
+            # _evr_points = # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
+            # _evr_region_type = # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
+            # _evr_region_name = # String
             #########################################################
             evr_region_structure_version = bbox_split[0]
             if evr_region_structure_version != "13":
@@ -218,7 +166,12 @@ class EchoviewRecordManager:
                 print(evr_top_y_value_of_bounding_rectangle)
                 print(evr_right_x_value_of_bounding_rectangle)
                 print(evr_bottom_y_value_of_bounding_rectangle)
-            # TODO: make sure times are in-order!!!
+                # make sure times are in-order
+                if (
+                    evr_left_x_value_of_bounding_rectangle
+                    > evr_right_x_value_of_bounding_rectangle
+                ):
+                    raise Exception("Timestamps out of order!")
             offset_index = 0
             #
             # The number of lines of region notes to follow.
@@ -291,7 +244,6 @@ class EchoviewRecordManager:
             # closest_latitude = opened_cruise.latitude.sel(
             #     time=converted_time, method="nearest"
             # )
-            # also need ping_time_index?
             #############  #############
             print("______________________________________done reading")
         except Exception as e:
@@ -337,9 +289,6 @@ class EchoviewRecordManager:
             print("done processing evr directory")
 
 
-labels_with_extra_data = ["fish_school", "krill_schools", "AH_School"]
-
-
 # if __name__ == "__main__":
 #     try:
 #         echoview_record_manager = EchoviewRecordManager()
@@ -350,6 +299,7 @@ labels_with_extra_data = ["fish_school", "krill_schools", "AH_School"]
 #         print(e)
 
 
+# Example of polygon
 # 20191106 1314583780 25.4929369108 # top-left
 # 20191106 1314583780 30.2941528987 # bottom-left
 # 20191106 1314593790 30.2941528987 # bottom-right
