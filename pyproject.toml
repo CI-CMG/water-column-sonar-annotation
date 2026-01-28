@@ -28,7 +28,7 @@ dependencies = [
     "pyarrow",
     "pyogrio",
     "python-dotenv",
-    #    "s3fs==2025.12.0", # problem here, uv finds the wrong one
+    "s3fs", # problem here, uv finds the wrong one
     "scipy",
     "shapely",
     "setuptools",
