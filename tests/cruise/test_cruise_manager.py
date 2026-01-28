@@ -32,7 +32,7 @@ def test_get_time_depth():
         start_time="2019-10-16T16:20:00",
         end_time="2019-10-16T16:50:00",
     )
-    assert np.isclose(depth_value, 96.356674)
+    assert np.isclose(depth_value, 96.36)  # 96.356674
 
 
 def test_get_coordinates():

@@ -76,7 +76,7 @@ class CruiseManager:
             cruise = self.cruise  # get_cruise()
             time_slice = slice(start_time, end_time)
             bottom_depths = cruise.sel(time=time_slice).bottom.values
-            return np.nanmin(bottom_depths)
+            return np.round(np.nanmin(bottom_depths), 2)
         except Exception as e:
             print(f"Could not find depth: {e}")
 
