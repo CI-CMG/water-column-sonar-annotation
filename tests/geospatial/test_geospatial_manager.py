@@ -43,7 +43,7 @@ def test_check_distance_from_coastline_woods_hole(
     )
     # The sound is 5 km across
     # assert np.isclose(distance, 4_457.0347)  # 4.5 km --> should be 2.5 km?
-    assert np.isclose(distance, 3_093.3015)  # 3 km is close enough
+    assert np.isclose(distance, 3_093)  # 3_093.3015 km is close enough
 
 
 def test_get_local_time():

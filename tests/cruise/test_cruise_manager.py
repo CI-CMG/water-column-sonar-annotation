@@ -33,3 +33,17 @@ def test_get_time_depth():
         end_time="2019-10-16T16:50:00",
     )
     assert np.isclose(depth_value, 96.356674)
+
+
+def test_get_coordinates():
+    """This only gets the depth over the interval, need to calculate the 'altitude'"""
+    cruise_manager = CruiseManager()
+    lat, lon = cruise_manager.get_coordinates(
+        start_time="2019-10-16T16:20:00",
+        end_time="2019-10-16T16:30:00",
+    )
+    assert np.isclose(lat, 41.48177)
+    assert np.isclose(lon, -68.50478)
+
+
+# get_gps

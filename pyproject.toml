@@ -1,6 +1,6 @@
 [project]
 name = "water-column-sonar-annotation"
-version = "26.1.5"
+version = "26.1.6"
 authors = [
     { name = "Rudy Klucik", email = "rudy.klucik@noaa.gov" },
 ]
@@ -28,7 +28,7 @@ dependencies = [
     "pyarrow",
     "pyogrio",
     "python-dotenv",
-    "s3fs==2025.12.0", # problem here, uv finds the wrong one
+    #    "s3fs==2025.12.0", # problem here, uv finds the wrong one
     "scipy",
     "shapely",
     "setuptools",

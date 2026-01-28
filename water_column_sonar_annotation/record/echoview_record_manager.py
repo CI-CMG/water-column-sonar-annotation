@@ -6,6 +6,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from water_column_sonar_annotation.astronomical import AstronomicalManager
+from water_column_sonar_annotation.cruise import CruiseManager
+from water_column_sonar_annotation.geospatial import GeospatialManager
+from water_column_sonar_annotation.record import EchofishRecordManager
+
 """
 Documentation for echoview record files in EVR format:
 https://support.echoview.com/WebHelp/Reference/File_Formats/Export_File_Formats/2D_Region_definition_file_format.htm
@@ -51,7 +56,12 @@ class EchoviewRecordManager:
             "krill_schools",  # TODO: exclude
             "AH_School",
         ]
-        self.all_records_df = pd.DataFrame(columns=["A", "B", "C"])
+        self.all_records_df = pd.DataFrame()  # columns=["filename", "start_time"])
+        #
+        self.astronomical_manager = AstronomicalManager()
+        self.cruise_manager = CruiseManager()
+        self.geospatial_manager = GeospatialManager()
+        # print(self.cruise_manager) # so the cruise is open
 
     def __enter__(self):
         print("__enter__ called")
@@ -83,7 +93,6 @@ class EchoviewRecordManager:
     """
 
     # TODO:
-    #  [1] write the records to a pandas dataframe
     #  [2] write df to parquet and tag as github resource
 
     @staticmethod
@@ -161,6 +170,10 @@ class EchoviewRecordManager:
             #
             # "1" if the next four fields are valid; "0" otherwise
             evr_bounding_rectangle_calculated = bbox_split[6]
+            evr_left_x_value_of_bounding_rectangle = None
+            evr_top_y_value_of_bounding_rectangle = None
+            evr_right_x_value_of_bounding_rectangle = None
+            evr_bottom_y_value_of_bounding_rectangle = None
             if evr_bounding_rectangle_calculated == "1":
                 # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
                 # '20190925 2053458953' <-- TODO: format into datetime
@@ -249,7 +262,7 @@ class EchoviewRecordManager:
             # end_time
             # min_depth
             # max_depth
-            # polygon????
+            # geometry
             # altitude
             # latitude
             # longitude
@@ -262,6 +275,69 @@ class EchoviewRecordManager:
             # is_daytime
             # int month
             # provenance
+            #
+            #
+            (latitude, longitude) = self.cruise_manager.get_coordinates(
+                start_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+                end_time=evr_right_x_value_of_bounding_rectangle.isoformat(),
+            )
+            local_time = self.geospatial_manager.get_local_time(
+                iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+                latitude=latitude,
+                longitude=longitude,
+            )
+            solar_altitude = self.astronomical_manager.get_solar_azimuth(
+                iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+                latitude=latitude,
+                longitude=longitude,
+            )
+            is_daytime = self.astronomical_manager.is_daylight(
+                iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+                latitude=latitude,
+                longitude=longitude,
+            )
+            distance_from_coastline = (
+                self.geospatial_manager.check_distance_from_coastline(
+                    latitude=latitude,
+                    longitude=longitude,
+                    # shapefile_path=
+                )
+            )
+            print(distance_from_coastline)
+            # altitude = self.geospatial_manager.
+            #
+            echofish_record_manager = EchofishRecordManager(
+                #
+                start_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+                end_time=evr_right_x_value_of_bounding_rectangle.isoformat(),
+                min_depth=np.round(evr_top_y_value_of_bounding_rectangle, 2),
+                max_depth=np.round(evr_bottom_y_value_of_bounding_rectangle, 2),
+                month=evr_left_x_value_of_bounding_rectangle.month,  # TODO: UTC Month, maybe change to localtime
+                #
+                # from time, get lat/lon
+                latitude=float(latitude),
+                longitude=float(longitude),
+                local_time=local_time,
+                solar_altitude=solar_altitude,
+                is_daytime=is_daytime,
+                #
+                distance_from_coastline=distance_from_coastline,
+                altitude=32.3,  # TODO:
+                geometry="P(0, 1)",  # TODO:
+                #
+                provenance=filename,
+            )
+            print(echofish_record_manager.__dict__)
+            #
+            data = dict(
+                filename=filename,
+                start_date=evr_left_x_value_of_bounding_rectangle.isoformat(),
+            )
+            update_df = pd.DataFrame([data])
+            self.all_records_df = pd.concat(
+                [self.all_records_df, update_df],
+                ignore_index=True,
+            )
             #
             print("______________________________________done reading_+_+_+_+_+_+_+_+")
         except Exception as process_evr_record_exception:
@@ -313,6 +389,7 @@ class EchoviewRecordManager:
 #         echoview_record_manager.process_evr_directory(
 #             evr_directory_path="../../data/HB201906/"
 #         )
+#         print("done processing everything")
 #     except Exception as e:
 #         print(e)
 

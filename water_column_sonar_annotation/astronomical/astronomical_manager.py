@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import pvlib
 
@@ -42,7 +43,7 @@ class AstronomicalManager:
         #     longitude=longitude,
         # )
         # Note: sunrise & sunset can be consolidated into altitude
-        return elevation
+        return np.round(elevation, 2)
 
     def is_daylight(
         self,
