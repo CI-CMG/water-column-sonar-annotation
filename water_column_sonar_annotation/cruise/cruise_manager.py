@@ -36,17 +36,6 @@ class CruiseManager:
         self,
     ):
         try:
-            # zarr_store = f"{self.cruise_name}.zarr"
-            # s3_zarr_store_path = f"{self.bucket_name}/{self.level}/{self.ship_name}/{self.cruise_name}/{self.sensor_name}/{zarr_store}"
-            #
-            # kwargs = {"consolidated": False}
-            # cruise = xr.open_dataset(
-            #     f"s3://{s3_zarr_store_path}",
-            #     engine="zarr",
-            #     storage_options={"anon": True},
-            #     # chunks={},
-            #     **kwargs,
-            # )
             return self.cruise
         except Exception as e:
             print(f"Could not open cruise: {e}")
