@@ -68,11 +68,15 @@ class GeospatialManager:
             gdf_p = gpd.GeoDataFrame(geometry=[geometry_two], crs=self.crs)
             gdf_l = geometry_one
             gdf_p = gdf_p.to_crs(gdf_p.estimate_utm_crs())
+            # print(gdf_p.to_string())
             gdf_l = gdf_l.to_crs(gdf_p.crs)
             # TODO: index 1399 has inf values, investigate
+            # RuntimeWarning: invalid value encountered in distance
+            #   return lib.distance(a, b, **kwargs)
             all_distances = [
                 gdf_p.geometry.distance(gdf_l.get_geometry(0)[i])[0]
                 for i in range(len(gdf_l.get_geometry(0)))
+                if gdf_l.get_geometry(0)[i].is_valid
             ]
             return np.round(np.min(all_distances), 0)
         except Exception as e:

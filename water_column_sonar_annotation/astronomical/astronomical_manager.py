@@ -35,14 +35,9 @@ class AstronomicalManager:
             latitude=latitude,
             longitude=longitude,
         )
-        # 'elevation' is analogous to 'altitude'
+        # 'elevation' is analogous to 'altitude' in suncalc
         elevation = solar_position.elevation.iloc[0]
-        # sunrise_sunset = pvlib.solarposition.sun_rise_set_transit_spa(
-        #     times=pd.DatetimeIndex([iso_time]),
-        #     latitude=latitude,
-        #     longitude=longitude,
-        # )
-        # Note: sunrise & sunset can be consolidated into altitude
+        ### The altitude aka elevation is the angle between horizon and the center of the sun including refraction ###
         return np.round(elevation, 2)
 
     def is_daylight(

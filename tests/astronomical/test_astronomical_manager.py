@@ -30,6 +30,18 @@ def test_get_solar_azimuth():
     assert np.isclose(azimuth_sunset, 1.25)  # 27)
 
 
+def test_get_solar_azimuth_boulder_2pm():
+    # 2026-01-29 @2pm is UTC: "2026-01-29T21:02:23Z"
+    astronomical_manager = AstronomicalManager()
+    # https://www.suncalc.org/#/39.9812,-105.2495,13/2026.01.26/11:52/1/3
+    azimuth_noon = astronomical_manager.get_solar_azimuth(
+        iso_time="2026-01-29T21:02:23Z",  # 2pm
+        latitude=39.9674884,  # Boulder
+        longitude=-105.2532602,
+    )
+    assert np.isclose(azimuth_noon, 27.01)
+
+
 def test_is_daylight_at_noon():
     astronomical_manager = AstronomicalManager()
     is_daylight = astronomical_manager.is_daylight(

@@ -1,6 +1,6 @@
 [project]
 name = "water-column-sonar-annotation"
-version = "26.1.6"
+version = "26.1.8"
 authors = [
     { name = "Rudy Klucik", email = "rudy.klucik@noaa.gov" },
 ]
@@ -54,6 +54,7 @@ dev = [
 [project.urls]
 Homepage = "https://echo.fish"
 Repository = "https://github.com/CI-CMG/water-column-sonar-annotation"
+Documentation = "https://github.com/CI-CMG/water-column-sonar-annotation"
 Issues = "https://github.com/CI-CMG/water-column-sonar-annotation/issues"
 
 [tool.bandit]

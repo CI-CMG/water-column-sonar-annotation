@@ -1,3 +1,4 @@
+import hashlib
 import itertools
 from os import listdir
 from os.path import isfile, join
@@ -9,7 +10,15 @@ import pandas as pd
 from water_column_sonar_annotation.astronomical import AstronomicalManager
 from water_column_sonar_annotation.cruise import CruiseManager
 from water_column_sonar_annotation.geospatial import GeospatialManager
-from water_column_sonar_annotation.record import EchofishRecordManager
+from water_column_sonar_annotation.record.graph_record_manager import (
+    GraphRecordManager,
+)
+from water_column_sonar_annotation.record.parquet_record_manager import (
+    ParquetRecordManager,
+)
+
+# from water_column_sonar_annotation.record import EchofishRecordManager
+# from water_column_sonar_annotation.record import GRecordManager
 
 """
 Documentation for echoview record files in EVR format:
@@ -51,9 +60,10 @@ class EchoviewRecordManager:
         }
         self.evr_region_classifications = [
             "possible_herring",
+            "atlantic_herring",
             "fish_school",
             "Unclassified regions",  # TODO: per CWB continue to include this
-            "krill_schools",  # TODO: exclude
+            "krill_schools",  # excluding this field because of unknowns
             "AH_School",
         ]
         self.all_records_df = pd.DataFrame()  # columns=["filename", "start_time"])
@@ -61,7 +71,6 @@ class EchoviewRecordManager:
         self.astronomical_manager = AstronomicalManager()
         self.cruise_manager = CruiseManager()
         self.geospatial_manager = GeospatialManager()
-        # print(self.cruise_manager) # so the cruise is open
 
     def __enter__(self):
         print("__enter__ called")
@@ -101,6 +110,7 @@ class EchoviewRecordManager:
         time_string: str,
     ):
         """Returns time in UTC from strings '20190925' and '2053458953'"""
+        # np.datetime64()
         return pd.to_datetime(f"{date_string} {time_string}", format="%Y%m%d %H%M%S%f")
 
     def process_vertice(
@@ -110,7 +120,7 @@ class EchoviewRecordManager:
         depth: float,
     ) -> tuple:
         dt = self.process_datetime_string(date_string, time_string)
-        print(dt.value)  # is epoch time in nanoseconds
+        # print(dt.value)  # is epoch time in nanoseconds
         return dt, dt.value, np.round(depth, 2)
 
     def process_evr_record(
@@ -119,31 +129,12 @@ class EchoviewRecordManager:
         filename: str,
     ):
         try:
-            ####################################
+            #########################################################
             record_lines = [x for x in evr_record.split("\n") if x]
             ############# get bbox #############
             bbox_split = record_lines[0].split()  # [x for x in record.split() if x]
             #########################################################
             # https://support.echoview.com/WebHelp/Reference/File_Formats/Export_File_Formats/2D_Region_definition_file_format.htm
-            # _evr_region_structure_version = bbox_split[0] # "13" (will be incremented if the region structure changes in future versions)
-            # _evr_point_count = bbox_split[1] # Number of points in the region
-            # _evr_region_id = # Unique number for each region. Specify sequential numbers starting at 1 if creating a new file
-            # _evr_selected = # "0" (always)
-            # _evr_region_creation_type = # See "Data formats" definition
-            # _evr_dummy = # Should always be "-1"
-            # _evr_bounding_rectangle_calculated = # "1" if the next four fields are valid; "0" otherwise
-            # _evr_left_x_value_of_bounding_rectangle = # Date and time of left boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-            # _evr_top_y_value_of_bounding_rectangle = # Upper depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-            # _evr_right_x_value_of_bounding_rectangle = # Date and time of right boundary of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-            # _evr_bottom_y_value_of_bounding_rectangle = # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
-            # _evr_number_of_lines_of_notes = # The number of lines of region notes to follow.
-            # _evr_region_notes = # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
-            # _evr_number_of_lines_of_detection_settings = # The number of lines of detection settings to follow.
-            # _evr_region_detection_settings = # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
-            # _evr_region_classification = # Region classification (string). Default value is "Unclassified regions"
-            # _evr_points = # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
-            # _evr_region_type = # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
-            # _evr_region_name = # String
             #########################################################
             evr_region_structure_version = bbox_split[0]
             if evr_region_structure_version != "13":
@@ -161,14 +152,14 @@ class EchoviewRecordManager:
             #
             evr_region_creation_type = bbox_split[4]  # See "Data formats" definition
             print(
-                f"Region creation type: {self.region_creation_type[evr_region_creation_type]}"
+                f"EVR region creation type: {self.region_creation_type[evr_region_creation_type]}"
             )
             #
             evr_dummy = bbox_split[5]  # Should always be "-1"
             if evr_dummy != "-1":
                 raise Exception("EVR Dummy Should always be -1")
             #
-            # "1" if the next four fields are valid; "0" otherwise
+            ### "1" if the next four fields are valid; "0" otherwise ###
             evr_bounding_rectangle_calculated = bbox_split[6]
             evr_left_x_value_of_bounding_rectangle = None
             evr_top_y_value_of_bounding_rectangle = None
@@ -188,10 +179,9 @@ class EchoviewRecordManager:
                 )
                 # Lower depth coordinate of bounding rectangle – ignored when importing into Echoview. See "Point 1" in table below.
                 evr_bottom_y_value_of_bounding_rectangle = float(bbox_split[12])
-                print(evr_left_x_value_of_bounding_rectangle)
-                print(evr_top_y_value_of_bounding_rectangle)
-                print(evr_right_x_value_of_bounding_rectangle)
-                print(evr_bottom_y_value_of_bounding_rectangle)
+                print(
+                    f"{evr_left_x_value_of_bounding_rectangle.isoformat()}, {evr_top_y_value_of_bounding_rectangle}, {evr_right_x_value_of_bounding_rectangle.isoformat()}, {evr_bottom_y_value_of_bounding_rectangle}"
+                )
                 # making sure times are in-order
                 if (
                     evr_left_x_value_of_bounding_rectangle
@@ -200,23 +190,23 @@ class EchoviewRecordManager:
                     raise Exception("Timestamps out of order!")
             #
             offset_index = 0
-            # The number of lines of region notes to follow.
+            ### The number of lines of region notes to follow. ###
             evr_number_of_lines_of_notes = int(record_lines[1])
             print(f"Number of region notes: {evr_number_of_lines_of_notes}")
-            # Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE.
+            ### Notes associated with the region. Maximum length is 2048 characters. Embedded CR characters are encoded as hexadecimal FF. Embedded LF characters are encoded as hexadecimal FE. ###
             if evr_number_of_lines_of_notes > 0:
                 offset_index = offset_index + evr_number_of_lines_of_notes + 1
                 evr_region_notes = record_lines[1:offset_index]
                 print(f"Region notes: {evr_region_notes}")
             #
-            # The number of lines of detection settings to follow.
+            ### The number of lines of detection settings to follow. ###
             evr_number_of_lines_of_detection_settings = int(
                 record_lines[2 + offset_index]
             )
             print(
                 f"Number of lines of detection settings: {evr_number_of_lines_of_detection_settings}"
             )
-            # The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box.
+            ### The detection settings as defined in the Fish Track Detection Properties dialog box or Detect Schools dialog box. ###
             if evr_number_of_lines_of_detection_settings > 0:
                 offset_index = (
                     evr_number_of_lines_of_notes
@@ -226,16 +216,22 @@ class EchoviewRecordManager:
                 evr_region_detection_settings = record_lines[3:offset_index]
                 print(f"Region detection settings: {evr_region_detection_settings}")
             #
-            # Region classification (string). Default value is "Unclassified regions"
+            ### Region classification (string). Default value is "Unclassified regions" ###
             evr_region_classification = record_lines[-3]
             if evr_region_classification not in self.evr_region_classifications:
                 raise Exception(
                     f"Problem, unknown region classification: {evr_region_classification}"
                 )
             print(f"Region classification: {evr_region_classification}")
+            #
+            # TODO: If the data has krill, skip creating a record of it
+            if evr_region_classification == "krill_schools":
+                print("Krill, skipping!!!")
+                return
+            #
             # Data for first point – See Data formats below. These data are used to bound the region when importing into Echoview
             evr_points = [x for x in record_lines[-2].split(" ") if x][:-1]
-            print(f"EVR points: {evr_points}")  # TODO: strip last entry
+            # print(f"EVR points: {evr_points}")  # TODO: strip last entry
             #
             evr_point_chunks = list(itertools.batched(evr_points, 3))
             for evr_point_chunk in evr_point_chunks:
@@ -256,92 +252,90 @@ class EchoviewRecordManager:
             evr_region_name = record_lines[-1]
             print(f"Region name: {evr_region_name}")
             #
-            print(f"Filename: {filename}")
-            # TODO:
-            # start_time
-            # end_time
-            # min_depth
-            # max_depth
-            # geometry
-            # altitude
-            # latitude
-            # longitude
-            # ship
-            # cruise
-            # sensor
-            # local time
-            # distance from shore
-            # solar azimuth
-            # is_daytime
-            # int month
-            # provenance
+            # (latitude, longitude) = self.cruise_manager.get_coordinates(
+            #     start_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+            #     end_time=evr_right_x_value_of_bounding_rectangle.isoformat(),
+            # )
+            # local_time = self.geospatial_manager.get_local_time(
+            #     iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+            #     latitude=latitude,
+            #     longitude=longitude,
+            # )
+            # solar_altitude = self.astronomical_manager.get_solar_azimuth(
+            #     iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+            #     latitude=latitude,
+            #     longitude=longitude,
+            # )
+            # is_daytime = self.astronomical_manager.is_daylight(
+            #     iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+            #     latitude=latitude,
+            #     longitude=longitude,
+            # )
+            # distance_from_coastline = (
+            #     self.geospatial_manager.check_distance_from_coastline(
+            #         latitude=latitude,
+            #         longitude=longitude,
+            #         # shapefile_path=
+            #     )
+            # )
+            # evr_altitude = self.cruise_manager.get_altitude(
+            #     start_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+            #     end_time=evr_right_x_value_of_bounding_rectangle.isoformat(),
+            #     bbox_max=evr_bottom_y_value_of_bounding_rectangle,
+            # )
+            # #
+            # # print("%5.2f, %5.2f, {2}, {3}, {4]" % (latitude, longitude, local_time, solar_altitude, is_daytime, distance_from_coastline, evr_altitude))
+            # print(
+            #     f"{latitude}, {longitude}, {local_time}, {solar_altitude}, {is_daytime}, {distance_from_coastline}, {evr_altitude}"
+            # )
             #
+            # TODO: need additional infor for provenance --> need to create a unique key for each
+            #   want a hash of some sort
+            #   add the region_id (which will recycle from file to file)
             #
-            (latitude, longitude) = self.cruise_manager.get_coordinates(
-                start_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
-                end_time=evr_right_x_value_of_bounding_rectangle.isoformat(),
+            ### provenance ###
+            geometry_string = record_lines[-2]  # inclusive of evr_region_type
+            # geometry_string = evr_record # TODO: should i hash the entire record or the geometry?
+            geometry_hash = (
+                f"{hashlib.sha256(geometry_string.encode('utf-8')).hexdigest()}"
+                # f"sha256:{hashlib.sha256(geometry_string.encode('utf-8')).hexdigest()}"
             )
-            local_time = self.geospatial_manager.get_local_time(
-                iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
-                latitude=latitude,
-                longitude=longitude,
-            )
-            solar_altitude = self.astronomical_manager.get_solar_azimuth(
-                iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
-                latitude=latitude,
-                longitude=longitude,
-            )
-            is_daytime = self.astronomical_manager.is_daylight(
-                iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
-                latitude=latitude,
-                longitude=longitude,
-            )
-            distance_from_coastline = (
-                self.geospatial_manager.check_distance_from_coastline(
-                    latitude=latitude,
-                    longitude=longitude,
-                    # shapefile_path=
-                )
-            )
-            print(distance_from_coastline)
-            # altitude = self.geospatial_manager.
             #
-            echofish_record_manager = EchofishRecordManager(
-                #
-                start_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
-                end_time=evr_right_x_value_of_bounding_rectangle.isoformat(),
-                min_depth=np.round(evr_top_y_value_of_bounding_rectangle, 2),
-                max_depth=np.round(evr_bottom_y_value_of_bounding_rectangle, 2),
+            parquet_record_manager = ParquetRecordManager()
+            print(parquet_record_manager)
+            graph_record_manager = GraphRecordManager(
+                classification=evr_region_classification,
+                point_count=evr_point_count,
+                time_start=evr_left_x_value_of_bounding_rectangle.isoformat(),
+                time_end=evr_right_x_value_of_bounding_rectangle.isoformat(),
+                depth_min=np.round(evr_top_y_value_of_bounding_rectangle, 2),
+                depth_max=np.round(evr_bottom_y_value_of_bounding_rectangle, 2),
                 month=evr_left_x_value_of_bounding_rectangle.month,  # TODO: UTC Month, maybe change to localtime
+                # latitude=float(latitude),  # TODO: too many digits
+                # longitude=float(longitude),
+                # local_time=local_time,
+                # solar_altitude=solar_altitude,
+                # is_daytime=is_daytime,
+                # #
+                # distance_from_coastline=distance_from_coastline,
+                # altitude=evr_altitude,
+                # geometry="P(0, 1)",  # TODO: https://hvplot.holoviz.org/en/docs/latest/ref/api/manual/hvplot.hvPlot.polygons.html
                 #
-                # from time, get lat/lon
-                latitude=float(latitude),
-                longitude=float(longitude),
-                local_time=local_time,
-                solar_altitude=solar_altitude,
-                is_daytime=is_daytime,
-                #
-                distance_from_coastline=distance_from_coastline,
-                altitude=32.3,  # TODO:
-                geometry="P(0, 1)",  # TODO:
-                #
-                provenance=filename,
+                filename=filename,  # how do i find in parquet
+                region_id=evr_region_id,
+                geometry_hash=geometry_hash,
             )
-            print(echofish_record_manager.__dict__)
+            # print(graph_record_manager.to_json())
             #
-            data = dict(
-                filename=filename,
-                start_date=evr_left_x_value_of_bounding_rectangle.isoformat(),
-            )
-            update_df = pd.DataFrame([data])
+            update_df = pd.DataFrame([graph_record_manager.to_dict()])
             self.all_records_df = pd.concat(
                 [self.all_records_df, update_df],
                 ignore_index=True,
             )
-            #
-            print("______________________________________done reading_+_+_+_+_+_+_+_+")
         except Exception as process_evr_record_exception:
             print(f"Problem with process_evr_record: {process_evr_record_exception}")
+        finally:
+            print("______________________________________done reading_+_+_+_+_+_+_+_+")
 
     def process_evr_file(
         self,
@@ -372,11 +366,12 @@ class EchoviewRecordManager:
             ]
             all_evr_files.sort()
             print(f"Found {len(all_evr_files)} EVR files.")
-            for evr_file in all_evr_files:
+            for evr_file in all_evr_files[:4]:  # TODO: fix this
                 self.process_evr_file(
                     evr_file_path=evr_directory_path, evr_filename=evr_file
                 )
             # I don't have the lat/lon information to draw here... need to query the zarr store...
+            print(self.all_records_df)
         except Exception as process_evr_directory_exception:
             print(
                 f"Problem processing evr directory: {process_evr_directory_exception}"

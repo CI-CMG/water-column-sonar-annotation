@@ -58,8 +58,8 @@ class CruiseManager:
         end_time="2019-10-16T16:50:00",
     ):
         """
-        Returns the bottom depth in meters for a given ISO timestamp
-        Value returned is the minimum depth over that interval.
+        Returns the bottom depth in meters for a given interval of ISO
+        timestamps. Value returned is the minimum depth over that interval.
         """
         try:
             cruise = self.cruise  # get_cruise()
@@ -71,10 +71,20 @@ class CruiseManager:
 
     def get_altitude(
         self,
-        start_time="2019-10-16T16:20:00",
-        end_time="2019-10-16T16:50:00",
+        start_time: str = "2019-10-16T16:20:00",
+        end_time: str = "2019-10-16T16:50:00",
+        bbox_max: float = 0.0,
     ):
-        pass
+        """
+        Will need a lot of improvement but this will do for first pass. In the
+        future need to check for each point the differential and find the
+        minimum.
+        """
+        try:
+            depth_min = self.get_depth(start_time, end_time)
+            return np.round(depth_min - bbox_max, 2).astype(np.float32)
+        except Exception as get_altitude_exception:
+            print(f"Problem getting altitude: {get_altitude_exception}")
 
 
 # if __name__ == "__main__":
