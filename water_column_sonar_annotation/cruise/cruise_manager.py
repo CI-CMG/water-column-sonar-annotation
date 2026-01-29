@@ -63,8 +63,17 @@ class CruiseManager:
         """
         try:
             cruise = self.cruise  # get_cruise()
+            # bottom_depths = cruise.time.where(
+            #     (
+            #         (cruise.time > np.datetime64(start_time))
+            #         & (cruise.time < np.datetime64(end_time))
+            #     ),
+            #     drop=True,
+            # ).bottom.values
             time_slice = slice(start_time, end_time)
             bottom_depths = cruise.sel(time=time_slice).bottom.values
+            if np.all(np.isnan(bottom_depths)):
+                return np.nan
             return np.round(np.nanmin(bottom_depths), 2)
         except Exception as e:
             print(f"Could not find depth: {e}")
@@ -82,6 +91,8 @@ class CruiseManager:
         """
         try:
             depth_min = self.get_depth(start_time, end_time)
+            if np.isnan(depth_min):
+                return 0.0
             return np.round(depth_min - bbox_max, 2).astype(np.float32)
         except Exception as get_altitude_exception:
             print(f"Problem getting altitude: {get_altitude_exception}")

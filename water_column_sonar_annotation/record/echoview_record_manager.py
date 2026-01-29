@@ -13,9 +13,6 @@ from water_column_sonar_annotation.geospatial import GeospatialManager
 from water_column_sonar_annotation.record.graph_record_manager import (
     GraphRecordManager,
 )
-from water_column_sonar_annotation.record.parquet_record_manager import (
-    ParquetRecordManager,
-)
 
 # from water_column_sonar_annotation.record import EchofishRecordManager
 # from water_column_sonar_annotation.record import GRecordManager
@@ -252,37 +249,37 @@ class EchoviewRecordManager:
             evr_region_name = record_lines[-1]
             print(f"Region name: {evr_region_name}")
             #
-            # (latitude, longitude) = self.cruise_manager.get_coordinates(
-            #     start_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
-            #     end_time=evr_right_x_value_of_bounding_rectangle.isoformat(),
-            # )
-            # local_time = self.geospatial_manager.get_local_time(
-            #     iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
-            #     latitude=latitude,
-            #     longitude=longitude,
-            # )
-            # solar_altitude = self.astronomical_manager.get_solar_azimuth(
-            #     iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
-            #     latitude=latitude,
-            #     longitude=longitude,
-            # )
-            # is_daytime = self.astronomical_manager.is_daylight(
-            #     iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
-            #     latitude=latitude,
-            #     longitude=longitude,
-            # )
-            # distance_from_coastline = (
-            #     self.geospatial_manager.check_distance_from_coastline(
-            #         latitude=latitude,
-            #         longitude=longitude,
-            #         # shapefile_path=
-            #     )
-            # )
-            # evr_altitude = self.cruise_manager.get_altitude(
-            #     start_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
-            #     end_time=evr_right_x_value_of_bounding_rectangle.isoformat(),
-            #     bbox_max=evr_bottom_y_value_of_bounding_rectangle,
-            # )
+            (latitude, longitude) = self.cruise_manager.get_coordinates(
+                start_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+                end_time=evr_right_x_value_of_bounding_rectangle.isoformat(),
+            )
+            local_time = self.geospatial_manager.get_local_time(
+                iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+                latitude=latitude,
+                longitude=longitude,
+            )
+            solar_altitude = self.astronomical_manager.get_solar_azimuth(
+                iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+                latitude=latitude,
+                longitude=longitude,
+            )
+            is_daytime = self.astronomical_manager.is_daylight(
+                iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+                latitude=latitude,
+                longitude=longitude,
+            )
+            distance_from_coastline = (
+                self.geospatial_manager.check_distance_from_coastline(
+                    latitude=latitude,
+                    longitude=longitude,
+                    # shapefile_path=
+                )
+            )
+            evr_altitude = self.cruise_manager.get_altitude(
+                start_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
+                end_time=evr_right_x_value_of_bounding_rectangle.isoformat(),
+                bbox_max=evr_bottom_y_value_of_bounding_rectangle,
+            )
             # #
             # # print("%5.2f, %5.2f, {2}, {3}, {4]" % (latitude, longitude, local_time, solar_altitude, is_daytime, distance_from_coastline, evr_altitude))
             # print(
@@ -301,8 +298,8 @@ class EchoviewRecordManager:
                 # f"sha256:{hashlib.sha256(geometry_string.encode('utf-8')).hexdigest()}"
             )
             #
-            parquet_record_manager = ParquetRecordManager()
-            print(parquet_record_manager)
+            # parquet_record_manager = ParquetRecordManager()
+            # print(parquet_record_manager)
             graph_record_manager = GraphRecordManager(
                 classification=evr_region_classification,
                 point_count=evr_point_count,
@@ -311,14 +308,14 @@ class EchoviewRecordManager:
                 depth_min=np.round(evr_top_y_value_of_bounding_rectangle, 2),
                 depth_max=np.round(evr_bottom_y_value_of_bounding_rectangle, 2),
                 month=evr_left_x_value_of_bounding_rectangle.month,  # TODO: UTC Month, maybe change to localtime
-                # latitude=float(latitude),  # TODO: too many digits
-                # longitude=float(longitude),
-                # local_time=local_time,
-                # solar_altitude=solar_altitude,
-                # is_daytime=is_daytime,
-                # #
-                # distance_from_coastline=distance_from_coastline,
-                # altitude=evr_altitude,
+                latitude=float(latitude),  # TODO: too many digits
+                longitude=float(longitude),
+                local_time=local_time,
+                solar_altitude=solar_altitude,
+                is_daytime=is_daytime,
+                #
+                distance_from_coastline=distance_from_coastline,
+                altitude=evr_altitude,
                 # geometry="P(0, 1)",  # TODO: https://hvplot.holoviz.org/en/docs/latest/ref/api/manual/hvplot.hvPlot.polygons.html
                 #
                 filename=filename,  # how do i find in parquet
