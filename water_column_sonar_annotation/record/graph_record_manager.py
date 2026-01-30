@@ -22,7 +22,7 @@ class GraphRecordManager:
         local_time,
         distance_from_coastline,
         solar_altitude,
-        is_daytime,
+        phase_of_day,
         filename,
         region_id,
         geometry_hash,  # sha256 hash
@@ -47,7 +47,7 @@ class GraphRecordManager:
         self.distance_from_coastline: float = distance_from_coastline
         ### astronomical ###
         self.solar_altitude: float = solar_altitude
-        self.is_daytime: bool = is_daytime
+        self.phase_of_day: bool = phase_of_day
         ### provenance ###
         self.filename: str = filename
         self.region_id: str = region_id

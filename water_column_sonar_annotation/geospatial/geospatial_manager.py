@@ -108,12 +108,14 @@ class GeospatialManager:
         latitude: float = 51.508742,
         longitude: float = -30.410156,
     ) -> int:
-        local_time = self.get_local_time(
-            iso_time=iso_time,
-            latitude=latitude,
-            longitude=longitude,
-        )
-        return int(local_time[11:13])
+        obj = TimezoneFinder()
+        calculated_timezone = obj.timezone_at(lng=longitude, lat=latitude)
+        from_zone = tz.gettz("UTC")
+        to_zone = tz.gettz(calculated_timezone)
+        utc = datetime.fromisoformat(iso_time)
+        utc = utc.replace(tzinfo=from_zone)
+        local_time = utc.astimezone(to_zone)
+        return local_time.hour
 
     def get_month_of_year(
         self,

@@ -266,8 +266,8 @@ class EchoviewRecordManager:
                 latitude=latitude,
                 longitude=longitude,
             )
-            print("is daytime")
-            is_daytime = self.astronomical_manager.is_daylight(
+            print("phase_of_day")
+            phase_of_day = self.astronomical_manager.phase_of_day(
                 iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
                 latitude=latitude,
                 longitude=longitude,
@@ -317,7 +317,7 @@ class EchoviewRecordManager:
                 longitude=float(longitude),
                 local_time=local_time,
                 solar_altitude=solar_altitude,
-                is_daytime=is_daytime,
+                phase_of_day=phase_of_day,
                 #
                 distance_from_coastline=distance_from_coastline,
                 altitude=evr_altitude,

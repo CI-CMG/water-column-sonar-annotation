@@ -1,6 +1,6 @@
 # Water Column Sonar Annotation
 
-Tool for converting EVR files to annotated regions of interest using semantic segmentation
+Tool for converting EVR files to annotated regions of interest in parquet format
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/CI-CMG/water-column-sonar-annotation/test_action.yaml)
 ![PyPI - Implementation](https://img.shields.io/pypi/v/water-column-sonar-annotation) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/CI-CMG/water-column-sonar-annotation) ![GitHub repo size](https://img.shields.io/github/repo-size/CI-CMG/water-column-sonar-annotation)
@@ -28,7 +28,7 @@ uv run pytest tests -W ignore::DeprecationWarning
 ```
 
 or
-> pytest --cache-clear --cov=src tests/ --cov-report=xml
+> uv run pytest tests/cruise --cov=water_column_sonar_annotation --cov-report term-missing
 
 ```
 uv run pre-commit install --allow-missing-config
@@ -56,11 +56,6 @@ gh release create v26.1.0
 uv build --no-sources
 uv publish
 ```
-
-# TODO:
-
-add https://pypi.org/project/setuptools-scm/
-for extracting the version
 
 # UV Debugging
 

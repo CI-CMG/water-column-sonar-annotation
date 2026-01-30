@@ -42,72 +42,107 @@ def test_get_solar_azimuth_boulder_2pm():
     assert np.isclose(azimuth_noon, 27.01)
 
 
-def test_is_daylight_at_noon():
+### PHASE OF DAY ###
+# { 'dawn': 1, 'day': 2, 'dusk': 3, 'night': 4 }
+def test_phase_of_day_at_noon():
     astronomical_manager = AstronomicalManager()
-    is_daylight = astronomical_manager.is_daylight(
+    phase = astronomical_manager.phase_of_day(
         iso_time="2026-01-27T19:00:00Z",  # noon
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert is_daylight
+    assert phase == 2
 
 
-def test_is_daylight_at_midnight():
+def test_phase_of_day_at_midnight():
     astronomical_manager = AstronomicalManager()
-    is_daylight = astronomical_manager.is_daylight(
-        iso_time="2026-01-28T07:00:00Z",  # noon
+    phase = astronomical_manager.phase_of_day(
+        iso_time="2026-01-28T07:00:00Z",
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert not is_daylight
+    assert phase == 4
 
 
-def test_is_daylight_at_sunset_before_and_after():
+def test_phase_of_day_before_sunset():
     astronomical_manager = AstronomicalManager()
-    is_daylight = astronomical_manager.is_daylight(
+    phase = astronomical_manager.phase_of_day(
         # sunset is at 5:13pm on jan 27th, per https://psl.noaa.gov/boulder/boulder.sunset.html
-        iso_time="2026-01-28T00:13:00Z",  # sunset @ 5:13pm, nautical sunset @6:16pm
+        iso_time="2026-01-28T00:09:00Z",  # sunset @ 5:13pm, nautical sunset @6:16pm
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert is_daylight
+    assert phase == 2  # day
 
+
+def test_phase_of_day_after_sunset():
+    astronomical_manager = AstronomicalManager()
+    phase = astronomical_manager.phase_of_day(
+        # sunset is at 5:13pm on jan 27th, per https://psl.noaa.gov/boulder/boulder.sunset.html
+        iso_time="2026-01-28T00:10:00Z",  # sunset @ 5:13pm, nautical sunset @6:16pm
+        latitude=39.9674884,  # Boulder
+        longitude=-105.2532602,
+    )
+    assert phase == 3  # dusk
+
+
+def test_phase_of_day_before_nautical_sunset():
+    astronomical_manager = AstronomicalManager()
     # an hour'ish later is nautical sunset
-    is_daylight_before_nautical_sunset = astronomical_manager.is_daylight(
+    phase_before_nautical_sunset = astronomical_manager.phase_of_day(
         iso_time="2026-01-28T01:15:00Z",  # sunset @5:13pm, nautical sunset @6:16pm
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert is_daylight_before_nautical_sunset
+    assert phase_before_nautical_sunset == 3  # dusk
 
-    is_daylight_after_nautical_sunset = astronomical_manager.is_daylight(
-        iso_time="2026-01-28T01:16:00Z",  # sunset @5:13pm, nautical sunset @6:16pm
+
+def test_phase_of_day_after_nautical_sunset():
+    astronomical_manager = AstronomicalManager()
+    phase_after_nautical_sunset = astronomical_manager.phase_of_day(
+        iso_time="2026-01-28T01:17:00Z",  # sunset @5:13pm, nautical sunset @6:16pm
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert not is_daylight_after_nautical_sunset
+    assert phase_after_nautical_sunset == 4  # night
 
 
-def test_is_daylight_at_sunrise_before_and_after():
+def test_phase_of_day_before_sunrise():
     astronomical_manager = AstronomicalManager()
-    is_daylight_at_sunrise = astronomical_manager.is_daylight(
+    phase_at_sunrise = astronomical_manager.phase_of_day(
         iso_time="2026-01-27T14:13:00Z",  # sunrise @7:13am, nautical sunrise @6:12am
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert is_daylight_at_sunrise
+    assert phase_at_sunrise == 1  # dusk
 
+
+def test_phase_of_day_after_sunrise():
+    astronomical_manager = AstronomicalManager()
+    phase_at_sunrise = astronomical_manager.phase_of_day(
+        iso_time="2026-01-27T14:20:00Z",  # sunrise @7:13am, nautical sunrise @6:12am
+        latitude=39.9674884,  # Boulder
+        longitude=-105.2532602,
+    )
+    assert phase_at_sunrise == 2  # day
+
+
+def test_phase_of_day_before_nautical_sunrise():
+    astronomical_manager = AstronomicalManager()
     # about an hour before is nautical sunrise
-    is_daylight_before_nautical_sunrise = astronomical_manager.is_daylight(
+    phase_before_nautical_sunrise = astronomical_manager.phase_of_day(
         iso_time="2026-01-27T13:12:00Z",  # sunrise @7:13am, nautical sunrise @6:12am
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert not is_daylight_before_nautical_sunrise
+    assert phase_before_nautical_sunrise == 4  # night
 
-    is_daylight_after_nautical_sunrise = astronomical_manager.is_daylight(
-        iso_time="2026-01-27T13:13:00Z",  # sunrise @7:13am, nautical sunrise @6:12am
+
+def test_phase_of_day_after_nautical_sunrise():
+    astronomical_manager = AstronomicalManager()
+    phase = astronomical_manager.phase_of_day(
+        iso_time="2026-01-27T14:13:00Z",  # sunrise @7:13am, nautical sunrise @6:12am
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert is_daylight_after_nautical_sunrise
+    assert phase == 1

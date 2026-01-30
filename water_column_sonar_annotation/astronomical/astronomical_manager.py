@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import pvlib
 
+from water_column_sonar_annotation.geospatial import GeospatialManager
+
 
 class AstronomicalManager:
     #######################################################
@@ -11,9 +13,9 @@ class AstronomicalManager:
         self.DECIMAL_PRECISION = 6
         # https://github.com/CI-CMG/water-column-sonar-annotation/issues/6
         self.SUNRISE_DEGREES = 0.0
-        self.CIVIL_TWILIGHT_DEGREES = 6.0
-        self.NAUTICAL_TWILIGHT_DEGREES = 12.0  # Requested metric to calculate
-        self.ASTRONOMICAL_TWILIGHT_DEGREES = 18.0
+        self.CIVIL_TWILIGHT_DEGREES = -6.0
+        self.NAUTICAL_TWILIGHT_DEGREES = -12.0  # Requested metric to calculate
+        self.ASTRONOMICAL_TWILIGHT_DEGREES = -18.0
 
     @staticmethod
     def get_solar_azimuth(
@@ -40,23 +42,32 @@ class AstronomicalManager:
         ### The altitude aka elevation is the angle between horizon and the center of the sun including refraction ###
         return np.round(elevation, 2)
 
-    def is_daylight(
+    def phase_of_day(
         self,
         iso_time: str,
         latitude: float,
         longitude: float,
-    ) -> bool:
+    ) -> int:
         """
         Returns whether the time/gps references a Nautical Daylight time
         Going to need to verify the az is correctly computed
+        { 'night': 4, 'dawn': 1, 'day': 2, 'dusk': 3 }
         """
+        # categories = {"night": 4, "dawn": 1, "day": 2, "dusk": 3}
         solar_azimuth = self.get_solar_azimuth(iso_time, latitude, longitude)
-        twilight_measurement = self.NAUTICAL_TWILIGHT_DEGREES
-        if (solar_azimuth < (180.0 + twilight_measurement)) & (
-            solar_azimuth > (0.0 - twilight_measurement)
-        ):
-            return True
-        return False
+        geospatial_manager = GeospatialManager()
+        local_hour = geospatial_manager.get_local_hour_of_day(
+            iso_time=iso_time,
+            latitude=latitude,
+            longitude=longitude,
+        )
+        if solar_azimuth < self.NAUTICAL_TWILIGHT_DEGREES:
+            return 4  # night
+        if solar_azimuth >= 0.0:
+            return 2  # day
+        if local_hour < 12:
+            return 1  # dawn
+        return 3  # dusk
 
     # def get_moon_phase(self):
     #     # TODO: add method for getting the moon phase
