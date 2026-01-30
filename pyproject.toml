@@ -47,6 +47,7 @@ dev = [
     "pre-commit",
     "pvlib",
     "pytest",
+    "pytest-cov",
     "ruff",
     "tqdm",
 ]
