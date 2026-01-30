@@ -33,21 +33,21 @@ class GraphRecordManager:
         print("__init__ called")
         self.classification: str = classification
         self.point_count: int = point_count
-        # self.geometry: str = geometry
+        # self.geometry: str = geometry # Do not want for neo4j
         ### geospatial ###
         self.time_start: str = time_start
         self.time_end: str = time_end
         self.depth_min: float = depth_min
         self.depth_max: float = depth_max
         self.month: int = month
-        # self.altitude: float = altitude
-        # self.latitude: float = latitude
-        # self.longitude: float = longitude
-        # self.local_time: str = local_time
-        # self.distance_from_coastline: float = distance_from_coastline
-        # ### astronomical ###
-        # self.solar_altitude: float = solar_altitude
-        # self.is_daytime: bool = is_daytime
+        self.altitude: float = altitude
+        self.latitude: float = latitude
+        self.longitude: float = longitude
+        self.local_time: str = local_time
+        self.distance_from_coastline: float = distance_from_coastline
+        ### astronomical ###
+        self.solar_altitude: float = solar_altitude
+        self.is_daytime: bool = is_daytime
         ### provenance ###
         self.filename: str = filename
         self.region_id: str = region_id

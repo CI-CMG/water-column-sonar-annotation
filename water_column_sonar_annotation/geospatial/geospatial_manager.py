@@ -60,6 +60,9 @@ class GeospatialManager:
         longitude: float = -30.410156,  # -68.741455,
         shapefile_path: str = data_path()["DATA_PATH"],
     ) -> np.float32 | None:
+        """
+        # Note this takes about 14 seconds each, very slow!!!
+        """
         try:
             # requires the shape file too
             geometry_one = gpd.read_file(f"{shapefile_path}/ne_10m_coastline.shp")

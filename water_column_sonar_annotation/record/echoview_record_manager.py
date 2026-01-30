@@ -249,32 +249,37 @@ class EchoviewRecordManager:
             evr_region_name = record_lines[-1]
             print(f"Region name: {evr_region_name}")
             #
+            print("get lat lon")
             (latitude, longitude) = self.cruise_manager.get_coordinates(
                 start_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
                 end_time=evr_right_x_value_of_bounding_rectangle.isoformat(),
             )
+            print("get local time")
             local_time = self.geospatial_manager.get_local_time(
                 iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
                 latitude=latitude,
                 longitude=longitude,
             )
+            print("get solar")
             solar_altitude = self.astronomical_manager.get_solar_azimuth(
                 iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
                 latitude=latitude,
                 longitude=longitude,
             )
+            print("is daytime")
             is_daytime = self.astronomical_manager.is_daylight(
                 iso_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
                 latitude=latitude,
                 longitude=longitude,
             )
-            distance_from_coastline = (
+            print("distance")
+            distance_from_coastline = (  # Note this takes about 14 seconds each, very slow
                 self.geospatial_manager.check_distance_from_coastline(
                     latitude=latitude,
                     longitude=longitude,
-                    # shapefile_path=
                 )
             )
+            print("altitude")
             evr_altitude = self.cruise_manager.get_altitude(
                 start_time=evr_left_x_value_of_bounding_rectangle.isoformat(),
                 end_time=evr_right_x_value_of_bounding_rectangle.isoformat(),
@@ -363,27 +368,54 @@ class EchoviewRecordManager:
             ]
             all_evr_files.sort()
             print(f"Found {len(all_evr_files)} EVR files.")
-            for evr_file in all_evr_files[:4]:  # TODO: fix this
+            for evr_file in all_evr_files[:1]:  # TODO: fix this
                 self.process_evr_file(
                     evr_file_path=evr_directory_path, evr_filename=evr_file
                 )
             # I don't have the lat/lon information to draw here... need to query the zarr store...
             print(self.all_records_df)
+            self.all_records_df.set_index(
+                keys="geometry_hash", drop=False, inplace=True
+            )
+            #  sort by time
+            self.all_records_df.sort_values(
+                by="time_start",
+                axis=0,
+                ascending=True,
+                inplace=True,
+                ignore_index=False,
+            )
+            print("writing files")
+            self.all_records_df.to_parquet(
+                path="graph_record.parquet",
+                engine="pyarrow",
+                compression="snappy",
+                index=True,
+                partition_cols=None,
+            )
+            self.all_records_df.to_csv(
+                path_or_buf="graph_record.csv",
+                header=True,
+                index=True,
+                mode="w",
+            )
+            print("done writing files")
+            #
         except Exception as process_evr_directory_exception:
             print(
                 f"Problem processing evr directory: {process_evr_directory_exception}"
             )
 
 
-# if __name__ == "__main__":
-#     try:
-#         echoview_record_manager = EchoviewRecordManager()
-#         echoview_record_manager.process_evr_directory(
-#             evr_directory_path="../../data/HB201906/"
-#         )
-#         print("done processing everything")
-#     except Exception as e:
-#         print(e)
+if __name__ == "__main__":
+    try:
+        echoview_record_manager = EchoviewRecordManager()
+        echoview_record_manager.process_evr_directory(
+            evr_directory_path="../../data/HB201906/"
+        )
+        print("done processing everything")
+    except Exception as e:
+        print(e)
 
 
 # Example of polygon
