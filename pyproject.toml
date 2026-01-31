@@ -7,7 +7,7 @@ authors = [
 maintainers = [
     { name = "Rudy Klucik", email = "rudy.klucik@noaa.gov" },
 ]
-description = "Processing tool for working with water column sonar annotation data."
+description = "Processing Tool for Working with Water Column Sonar Annotations"
 keywords = ["ocean", "sonar", "water column"]
 readme = "README.md"
 requires-python = ">=3.12"
