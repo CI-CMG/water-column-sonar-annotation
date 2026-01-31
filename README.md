@@ -45,7 +45,7 @@ TODO
 Step 1 --> increment the semantic version in the zarr_manager.py "metadata" & the "pyproject.toml"
 
 ```commandline
-git tag -a v26.1.0 -m "Releasing v26.1.0"
+git tag -a v26.1.8 -m "Releasing v26.1.8"
 git push origin --tags
 gh release create v26.1.0
 ```
