@@ -17,50 +17,37 @@ Format for export to parquet and bulk ingest into neo4j:
 class ParquetRecordManager:
     def __init__(
         self,
-        # classification,
-        # point_count,
-        # geometry,
-        # time_start,
-        # time_end,
-        # depth_min,
-        # depth_max,
-        # month,
-        # # altitude,
-        # # latitude: float,
-        # # longitude: float,
-        # # local_time,
-        # # distance_from_coastline,
-        # # solar_altitude,
-        # # is_daytime,
-        # filename,
-        # region_id,
-        # geometry_hash,  # sha256 hash
+        classification,
+        point_count,
+        time_start,
+        time_end,
+        depth_min,
+        depth_max,
+        month,
+        latitude,
+        longitude,
+        filename,
+        region_id,
+        geometry_hash,
+        geometry,
         ship: str = "Henry_B._Bigelow",
         cruise: str = "HB1906",
         instrument: str = "EK60",
     ):
         print("__init__ called")
-        # self.classification: str = classification
-        # self.point_count: int = point_count
-        # # self.geometry: str = geometry
-        # ### geospatial ###
-        # self.time_start: str = time_start
-        # self.time_end: str = time_end
-        # self.depth_min: float = depth_min
-        # self.depth_max: float = depth_max
-        # self.month: int = month
-        # self.altitude: float = altitude
-        # self.latitude: float = latitude
-        # self.longitude: float = longitude
-        # self.local_time: str = local_time
-        # self.distance_from_coastline: float = distance_from_coastline
-        # ### astronomical ###
-        # self.solar_altitude: float = solar_altitude
-        # self.is_daytime: bool = is_daytime
-        ### provenance ###
-        # self.filename: str = filename
-        # self.region_id: str = region_id
-        # self.geometry_hash: str = geometry_hash
+        self.classification: str = classification
+        self.point_count: int = point_count
+        self.time_start: str = time_start
+        self.time_end: str = time_end
+        self.depth_min: float = depth_min
+        self.depth_max: float = depth_max
+        self.month: int = month
+        self.latitude: float = latitude
+        self.longitude: float = longitude
+        self.filename: str = filename
+        self.region_id: str = region_id
+        self.geometry_hash: str = geometry_hash
+        self.geometry: str = geometry
         self.ship: str = ship
         self.cruise: str = cruise
         self.instrument: str = instrument
@@ -120,9 +107,10 @@ class ParquetRecordManager:
         dfp = pq.read_table(source="test.parquet")
         print(dfp.shape)
         dfp_select = dfp.filter(
-            dfp["time_start"] >= np.datetime64("2019-09-25T17:49:38.647000")
+            (dfp["time_start"] >= np.datetime64("2019-09-25T17:49:40"))
+            & (dfp["time_end"] <= np.datetime64("2019-09-25T17:49:51"))
         )
-        print(dfp_select.shape)
+        print(dfp_select["geometry_hash"])
         # df = pq.read_table(source="Henry_B._Bigelow_HB1906_annotations.parquet").to_pandas()
 
     def to_dict(
@@ -156,5 +144,6 @@ with pandas:
     time_start: timestamp[us]
     time_end: timestamp[us]
     geometry_hash: large_string
-with numpy datetime64
+with numpy datetime64 -> doesn't work
+'>=' not supported between instances of 'pyarrow.lib.ChunkedArray' and 'Timestamp'
 """

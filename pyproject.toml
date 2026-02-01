@@ -28,7 +28,7 @@ dependencies = [
     "pvlib",
     "pyarrow",
     "pyogrio",
-    "pyspark",
+    #    "pyspark",
     "python-dotenv",
     "s3fs",
     "scipy",
