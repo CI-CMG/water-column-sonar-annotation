@@ -28,13 +28,13 @@ dependencies = [
     "pvlib",
     "pyarrow",
     "pyogrio",
+    "pyspark",
     "python-dotenv",
-    "s3fs", # problem here, uv finds the wrong one
+    "s3fs",
     "scipy",
     "shapely",
     "setuptools",
     "timezonefinder",
-    #    "wheel",
     "xarray",
     "zarr",
 ]
@@ -44,7 +44,6 @@ dependencies = [
 dev = [
     "bandit[toml]",
     "build",
-    "pooch",
     "pre-commit",
     "pytest",
     "pytest-cov",
