@@ -122,9 +122,6 @@ class EchoviewRecordManager:
     # evr_region_name = # String
     """
 
-    # TODO:
-    #  [2] write df to parquet and tag as github resource
-
     @staticmethod
     def process_datetime_string(
         date_string: str,
@@ -365,7 +362,6 @@ class EchoviewRecordManager:
             records = lines.split("\n\n")
             records = [i for i in records if i.startswith("13 ")]  # filter
             for evr_record in records:
-                # self.process_evr_record(evr_record=evr_record, filename=evr_filename)
                 self.process_evr_record_full_geometry(
                     evr_record=evr_record, file_name=evr_file_name
                 )
@@ -408,13 +404,16 @@ class EchoviewRecordManager:
                 ignore_index=False,
             )
             print("writing files")
-            # self.all_records_df.to_parquet(
-            #     path="parquet_record_full.parquet",
-            #     engine="pyarrow",
-            #     compression="snappy",
-            #     index=True,
-            #     # partition_cols=None,
-            # )
+            # TODO: write files to tmp directory???
+            # for front-end visualization
+            self.all_records_df.to_parquet(
+                path="parquet_record_full.parquet",
+                engine="pyarrow",
+                compression="snappy",
+                index=True,
+                # partition_cols=None,
+            )
+            # TODO: omit geometry and write to csv for upload to neo4j
             # self.all_records_df.to_csv(
             #     path_or_buf="parquet_record_full_geometry.csv",
             #     header=True,

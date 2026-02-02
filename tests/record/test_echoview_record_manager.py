@@ -154,7 +154,6 @@ def test_process_evr_record_fish_school():
     output = echoview_record_manager.process_evr_record_full_geometry(
         evr_record=fish_school_example, file_name="test.evr"
     )
-    print(output)
     assert output.time_start == np.datetime64("2019-09-25 17:49:45.160500")
     assert output.time_end == np.datetime64("2019-09-25 17:49:50.164500")
     assert output.depth_min == 20.28
@@ -181,33 +180,103 @@ def test_process_evr_record_fish_school():
     assert len(output.geometry) == 898  # TODO: elaborate
 
 
-# TODO: check assertions for output
 def test_process_evr_record_unclassified_regions():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record_full_geometry(
+    output = echoview_record_manager.process_evr_record_full_geometry(
         evr_record=unclassified_regions_example, file_name="test.evr"
     )
+    # print(output)
+    assert output.time_start == np.datetime64("2019-09-25 20:53:45.895300")
+    assert output.time_end == np.datetime64("2019-09-25 20:54:11.931800")
+    assert output.depth_min == 9.28
+    assert output.depth_max == 11.53
+    assert output.altitude == 21.68
+    assert output.latitude == 41.346
+    assert output.longitude == -70.90754
+    assert output.distance_from_coastline == 5132
+    assert output.local_time == "2019-09-25T16:53:45.895300-04:00"
+    assert output.month == 9
+    assert output.solar_altitude == 18.07
+    assert output.phase_of_day == "day"
+    assert output.classification == "Unclassified regions"
+    assert output.filename == "test.evr"
+    assert output.region_id == 1
+    assert output.ship == "Henry_B._Bigelow"
+    assert output.cruise == "HB1906"
+    assert output.instrument == "EK60"
+    assert output.point_count == 12
+    assert (
+        output.geometry_hash
+        == "521b9994ebcc00cb4640a9e9cfddf7470f3903e3eab8c918604269c48e723d8a"
+    )
+    assert len(output.geometry) == 352  # TODO: elaborate
 
 
-# TODO: check assertions for output
 def test_process_evr_record_krill_schools():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record_full_geometry(
+    output = echoview_record_manager.process_evr_record_full_geometry(
         evr_record=krill_schools_example, file_name="test.evr"
     )
+    assert output is None
 
 
-# TODO: check assertions for output
 def test_process_evr_record_ah_school_1():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record_full_geometry(
+    output = echoview_record_manager.process_evr_record_full_geometry(
         evr_record=ah_school_example1, file_name="test.evr"
     )
+    assert output.time_start == np.datetime64("2019-11-06 13:14:58.378000")
+    assert output.time_end == np.datetime64("2019-11-06 13:14:59.379000")
+    assert output.depth_min == 25.3
+    assert output.depth_max == 30.29
+    assert output.altitude == 70.28
+    assert output.latitude == 44.13652
+    assert output.longitude == -67.0766
+    assert output.distance_from_coastline == 51279
+    assert output.local_time == "2019-11-06T09:14:58.378000-04:00"
+    assert output.month == 11
+    assert output.solar_altitude == 17.61
+    assert output.phase_of_day == "day"
+    assert output.classification == "AH_School"
+    assert output.filename == "test.evr"
+    assert output.region_id == 23
+    assert output.ship == "Henry_B._Bigelow"
+    assert output.cruise == "HB1906"
+    assert output.instrument == "EK60"
+    assert output.point_count == 5
+    assert (
+        output.geometry_hash
+        == "6b976f373a3e035a3d0df62984cbdacf9e9df81e36369352637c7ae5458924a2"
+    )
+    assert len(output.geometry) == 148  # TODO: elaborate
 
 
-# TODO: check assertions for output
 def test_process_evr_record_ah_school_2():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record_full_geometry(
+    output = echoview_record_manager.process_evr_record_full_geometry(
         evr_record=ah_school_example2, file_name="test.evr"
     )
+    assert output.time_start == np.datetime64("2019-11-06 13:17:30.571500")
+    assert output.time_end == np.datetime64("2019-11-06 13:17:33.574500")
+    assert output.depth_min == 31.83
+    assert output.depth_max == 35.86
+    assert output.altitude == 70.93
+    assert output.latitude == 44.1376
+    assert output.longitude == -67.06638
+    assert output.distance_from_coastline == 50464
+    assert output.local_time == "2019-11-06T09:17:30.571500-04:00"
+    assert output.month == 11
+    assert output.solar_altitude == 17.93
+    assert output.phase_of_day == "day"
+    assert output.classification == "AH_School"
+    assert output.filename == "test.evr"
+    assert output.region_id == 28
+    assert output.ship == "Henry_B._Bigelow"
+    assert output.cruise == "HB1906"
+    assert output.instrument == "EK60"
+    assert output.point_count == 16
+    assert (
+        output.geometry_hash
+        == "038c6e57dd95bf9c836ae8ef6145ae53a4fa64bd6f836050c8fa8f2601ba2a41"
+    )
+    assert len(output.geometry) == 480  # TODO: elaborate
