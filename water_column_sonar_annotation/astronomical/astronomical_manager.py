@@ -47,7 +47,7 @@ class AstronomicalManager:
         iso_time: str,
         latitude: float,
         longitude: float,
-    ) -> int:
+    ) -> str:
         """
         Returns whether the time/gps references a Nautical Daylight time
         Going to need to verify the az is correctly computed
@@ -62,12 +62,12 @@ class AstronomicalManager:
             longitude=longitude,
         )
         if solar_azimuth < self.NAUTICAL_TWILIGHT_DEGREES:
-            return 4  # night
+            return "night"  # night
         if solar_azimuth >= 0.0:
-            return 2  # day
+            return "day"  # day
         if local_hour < 12:
-            return 1  # dawn
-        return 3  # dusk
+            return "dawn"  # dawn
+        return "dusk"  # dusk
 
     # def get_moon_phase(self):
     #     # TODO: add method for getting the moon phase

@@ -12,7 +12,7 @@ HB1906_DATA = pooch.create(
     retry_if_failed=1,
     registry={
         "HB201906_BOTTOMS.zip": "sha256:20609581493ea3326c1084b6868e02aafbb6c0eae871d946f30b8b5f0e7ba059",
-        "HB201906_EVR.zip": "sha256:ceed912a25301be8f1b8f91e134d0ca4cff717f52b6623a58677832fd60c2990",
+        "HB201906_EVR.zip": "sha256:256778122e9c8b05884f5f2c5cf5cdad5502aa3dae61d417ec5e4278262d937a",
         #
         # "ne_50m_coastline.shp": "sha256:797d675af9613f80b51ab6049fa32e589974d7a97c6497ca56772965f179ed26",
         # "ne_50m_coastline.shx": "sha256:0ff1792f2d16b58246d074215edd9d12fa280880ecaad61a91b9382fee854065",
@@ -24,14 +24,14 @@ HB1906_DATA = pooch.create(
 
 
 def fetch_raw_files():
-    HB1906_DATA.fetch(fname="HB201906_BOTTOMS.zip", progressbar=True)
-    HB1906_DATA.fetch(fname="HB201906_EVR.zip", progressbar=True)
+    # HB1906_DATA.fetch(fname="HB201906_BOTTOMS.zip", progressbar=True)
+    # HB1906_DATA.fetch(fname="HB201906_EVR.zip", progressbar=True)
 
     # HB1906_DATA.fetch(fname="ne_50m_coastline.shp", progressbar=True)
     # HB1906_DATA.fetch(fname="ne_50m_coastline.shx", progressbar=True)
 
-    HB1906_DATA.fetch(fname="ne_10m_coastline.shp", progressbar=True)
-    HB1906_DATA.fetch(fname="ne_10m_coastline.shx", progressbar=True)
+    # HB1906_DATA.fetch(fname="ne_10m_coastline.shp", progressbar=True)
+    # HB1906_DATA.fetch(fname="ne_10m_coastline.shx", progressbar=True)
 
     file_name = HB1906_DATA.fetch(fname="HB201906_EVR.zip", progressbar=True)
 

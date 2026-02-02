@@ -59,7 +59,7 @@ class GeospatialManager:
         latitude: float = 51.508742,  # 42.682435,
         longitude: float = -30.410156,  # -68.741455,
         shapefile_path: str = data_path()["DATA_PATH"],
-    ) -> np.float32 | None:
+    ) -> int | None:
         """
         # Note this takes about 14 seconds each, very slow!!!
         """
@@ -81,7 +81,7 @@ class GeospatialManager:
                 for i in range(len(gdf_l.get_geometry(0)))
                 if gdf_l.get_geometry(0)[i].is_valid
             ]
-            return np.round(np.min(all_distances), 0)
+            return int(np.min(all_distances))
         except Exception as e:
             print(f"Could not process the distance: {e}")
 

@@ -19,20 +19,21 @@ def process_check_distance_from_coastline(test_path):
 
 
 #######################################################
-def test_check_distance_from_coastline(process_check_distance_from_coastline, tmp_path):
+# def test_check_distance_from_coastline(process_check_distance_from_coastline, tmp_path):
+def test_check_distance_from_coastline():
     geospatial_manager = GeospatialManager()
     # Point in middle of atlantic https://wktmap.com/?ab28cbae
     distance = geospatial_manager.check_distance_from_coastline(
         latitude=51.508742,
         longitude=-30.410156,
-        shapefile_path=process_check_distance_from_coastline,
+        # shapefile_path=process_check_distance_from_coastline,
     )
     # assert np.isclose(distance, 1_236_212.37356)  # 1,200 km
-    assert np.isclose(distance, 1_233_910.720702243)
+    assert np.isclose(distance, 1_233_911)  # 1_233_910.720702243
 
 
 def test_check_distance_from_coastline_woods_hole(
-    process_check_distance_from_coastline, tmp_path
+    process_check_distance_from_coastline,
 ):
     geospatial_manager = GeospatialManager()
     # Point in middle of woods hole vineyard sound: https://wktmap.com/?9b405aa9

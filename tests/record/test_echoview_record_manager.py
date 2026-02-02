@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 
 from water_column_sonar_annotation.record import EchoviewRecordManager
@@ -92,7 +93,6 @@ AH_School
 20191106 1314583780 25.4929369108 20191106 1314583780 30.2941528987 20191106 1314593790 30.2941528987 20191106 1314593790 25.3008882713 20191106 1314583780 25.3008882713 1
 Region 23"""
 
-
 ah_school_example2 = """13 16 28 0 7 -1 1 20191106 1317305715  31.8305420148 20191106 1317335745  35.8635634446
 0
 10
@@ -120,41 +120,94 @@ atlantic_herring
 
 def test_process_evr_record_possible_herring():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record(
-        evr_record=possible_herring_example, filename="test.evr"
+    output = echoview_record_manager.process_evr_record_full_geometry(
+        evr_record=possible_herring_example, file_name="test.evr"
     )
+    assert output.time_start == np.datetime64("2019-09-25 22:47:24.213000")
+    assert output.time_end == np.datetime64("2019-09-25 22:47:36.246000")
+    assert output.depth_min == 24.13
+    assert output.depth_max == 35.17
+    assert output.altitude == 1.62
+    assert output.latitude == 41.29728
+    assert output.longitude == -70.96354
+    assert output.distance_from_coastline == 11249
+    assert output.local_time == "2019-09-25T18:47:24.213000-04:00"
+    assert output.month == 9
+    assert output.solar_altitude == -2.92
+    assert output.phase_of_day == "dusk"
+    assert output.classification == "possible_herring"
+    assert output.filename == "test.evr"
+    assert output.region_id == 7
+    assert output.ship == "Henry_B._Bigelow"
+    assert output.cruise == "HB1906"
+    assert output.instrument == "EK60"
+    assert output.point_count == 4
+    assert (
+        output.geometry_hash
+        == "a5032c1ae6a14cb534ae2dfcfcf15056a9dfc23c04270f7e7f1e44f3d23beb7c"
+    )
+    assert len(output.geometry) == 120  # TODO: elaborate
 
 
 def test_process_evr_record_fish_school():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record(
-        evr_record=fish_school_example, filename="test.evr"
+    output = echoview_record_manager.process_evr_record_full_geometry(
+        evr_record=fish_school_example, file_name="test.evr"
     )
+    print(output)
+    assert output.time_start == np.datetime64("2019-09-25 17:49:45.160500")
+    assert output.time_end == np.datetime64("2019-09-25 17:49:50.164500")
+    assert output.depth_min == 20.28
+    assert output.depth_max == 26.3
+    assert output.altitude == 6.83
+    assert output.latitude == 41.38583
+    assert output.longitude == -71.31283
+    assert output.distance_from_coastline == 8145
+    assert output.local_time == "2019-09-25T13:49:45.160500-04:00"
+    assert output.month == 9
+    assert output.solar_altitude == 44.57
+    assert output.phase_of_day == "day"
+    assert output.classification == "fish_school"
+    assert output.filename == "test.evr"
+    assert output.region_id == 8
+    assert output.ship == "Henry_B._Bigelow"
+    assert output.cruise == "HB1906"
+    assert output.instrument == "EK60"
+    assert output.point_count == 30
+    assert (
+        output.geometry_hash
+        == "e8f26554fa6ade664adc7c2b60896cf86d47092636ed8f2152c4cfa45dd962a9"
+    )
+    assert len(output.geometry) == 898  # TODO: elaborate
 
 
+# TODO: check assertions for output
 def test_process_evr_record_unclassified_regions():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record(
-        evr_record=unclassified_regions_example, filename="test.evr"
+    echoview_record_manager.process_evr_record_full_geometry(
+        evr_record=unclassified_regions_example, file_name="test.evr"
     )
 
 
+# TODO: check assertions for output
 def test_process_evr_record_krill_schools():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record(
-        evr_record=krill_schools_example, filename="test.evr"
+    echoview_record_manager.process_evr_record_full_geometry(
+        evr_record=krill_schools_example, file_name="test.evr"
     )
 
 
+# TODO: check assertions for output
 def test_process_evr_record_ah_school_1():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record(
-        evr_record=ah_school_example1, filename="test.evr"
+    echoview_record_manager.process_evr_record_full_geometry(
+        evr_record=ah_school_example1, file_name="test.evr"
     )
 
 
+# TODO: check assertions for output
 def test_process_evr_record_ah_school_2():
     echoview_record_manager = EchoviewRecordManager()
-    echoview_record_manager.process_evr_record(
-        evr_record=ah_school_example2, filename="test.evr"
+    echoview_record_manager.process_evr_record_full_geometry(
+        evr_record=ah_school_example2, file_name="test.evr"
     )

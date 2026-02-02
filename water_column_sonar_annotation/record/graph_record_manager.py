@@ -5,6 +5,7 @@ Format for export and bulk ingest into neo4j
 """
 
 
+# TODO: remove
 class GraphRecordManager:
     def __init__(
         self,

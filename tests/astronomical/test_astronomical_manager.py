@@ -51,7 +51,7 @@ def test_phase_of_day_at_noon():
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert phase == 2
+    assert phase == "day"
 
 
 def test_phase_of_day_at_midnight():
@@ -61,7 +61,7 @@ def test_phase_of_day_at_midnight():
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert phase == 4
+    assert phase == "night"
 
 
 def test_phase_of_day_before_sunset():
@@ -72,7 +72,7 @@ def test_phase_of_day_before_sunset():
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert phase == 2  # day
+    assert phase == "day"  # day
 
 
 def test_phase_of_day_after_sunset():
@@ -83,7 +83,7 @@ def test_phase_of_day_after_sunset():
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert phase == 3  # dusk
+    assert phase == "dusk"  # dusk
 
 
 def test_phase_of_day_before_nautical_sunset():
@@ -94,7 +94,7 @@ def test_phase_of_day_before_nautical_sunset():
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert phase_before_nautical_sunset == 3  # dusk
+    assert phase_before_nautical_sunset == "dusk"  # dusk
 
 
 def test_phase_of_day_after_nautical_sunset():
@@ -104,7 +104,7 @@ def test_phase_of_day_after_nautical_sunset():
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert phase_after_nautical_sunset == 4  # night
+    assert phase_after_nautical_sunset == "night"  # night
 
 
 def test_phase_of_day_before_sunrise():
@@ -114,7 +114,7 @@ def test_phase_of_day_before_sunrise():
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert phase_at_sunrise == 1  # dusk
+    assert phase_at_sunrise == "dawn"  # dawn
 
 
 def test_phase_of_day_after_sunrise():
@@ -124,7 +124,7 @@ def test_phase_of_day_after_sunrise():
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert phase_at_sunrise == 2  # day
+    assert phase_at_sunrise == "day"  # day
 
 
 def test_phase_of_day_before_nautical_sunrise():
@@ -135,7 +135,7 @@ def test_phase_of_day_before_nautical_sunrise():
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert phase_before_nautical_sunrise == 4  # night
+    assert phase_before_nautical_sunrise == "night"  # night
 
 
 def test_phase_of_day_after_nautical_sunrise():
@@ -145,4 +145,4 @@ def test_phase_of_day_after_nautical_sunrise():
         latitude=39.9674884,  # Boulder
         longitude=-105.2532602,
     )
-    assert phase == 1
+    assert phase == "dawn"  # dawn
