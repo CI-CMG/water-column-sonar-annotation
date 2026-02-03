@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 
 from water_column_sonar_annotation.cruise import CruiseManager
 
@@ -13,9 +12,9 @@ def teardown_module():
     print("teardown")
 
 
-@pytest.fixture
-def process_cruise_path(test_path):
-    return test_path["DATA_TEST_PATH"]
+# @pytest.fixture
+# def process_cruise_path(test_path):
+#     return test_path["DATA_TEST_PATH"]
 
 
 #######################################################
@@ -26,7 +25,7 @@ def process_cruise_path(test_path):
 #     assert len(cruise.Sv.shape) == 3
 
 
-def test_get_cruise(process_cruise_path, tmp_path):
+def test_get_cruise():
     cruise_manager = CruiseManager()
     cruise = cruise_manager.get_cruise()
     assert len(cruise.Sv.shape) == 3

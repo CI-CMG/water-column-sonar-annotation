@@ -81,7 +81,7 @@ def open_evr_file(cruise):
 
     # write to file
     gps_gdf.to_file(
-        filename="point_dataset.geojson",
+        filename="analysis/old/point_dataset.geojson",
         driver="GeoJSON",
         engine="fiona",  # or "pyogrio"
         layer_options={"ID_GENERATE": "YES"},

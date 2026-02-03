@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 
 from water_column_sonar_annotation.geospatial import GeospatialManager
 
@@ -13,9 +12,9 @@ def teardown_module():
     print("teardown")
 
 
-@pytest.fixture
-def process_check_distance_from_coastline(test_path):
-    return test_path["DATA_TEST_PATH"]
+# @pytest.fixture
+# def process_check_distance_from_coastline(test_path):
+#     return test_path["DATA_TEST_PATH"]
 
 
 #######################################################

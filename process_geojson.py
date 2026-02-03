@@ -8,7 +8,7 @@ sensor_name = "EK60"
 
 
 def open_geojson():
-    data = gpd.read_file("point_dataset.geojson")
+    data = gpd.read_file("analysis/old/point_dataset.geojson")
     print(data)
     annotation_labels = set(data["label"])
     # TODO: iterate, getting features out
