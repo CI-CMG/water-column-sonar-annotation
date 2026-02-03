@@ -385,7 +385,7 @@ class EchoviewRecordManager:
             #
             # TODO: only processing two files right now
             #
-            for evr_file in all_evr_files[0]:
+            for evr_file in all_evr_files:
                 self.process_evr_file(
                     evr_file_path=os.path.dirname(evr_file),
                     evr_file_name=os.path.basename(evr_file),
@@ -404,7 +404,7 @@ class EchoviewRecordManager:
                 ignore_index=False,
             )
             print("writing files")
-            # TODO: write files to tmp directory???
+            #
             # for front-end visualization
             self.all_records_df.to_parquet(
                 path="parquet_record_full.parquet",
