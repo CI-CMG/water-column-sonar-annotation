@@ -58,24 +58,21 @@ class GeospatialManager:
         self,  # -30.410156 51.508742)
         latitude: float = 51.508742,  # 42.682435,
         longitude: float = -30.410156,  # -68.741455,
-        shapefile_path: str = data_path()["DATA_PATH"],
     ) -> int | None:
         """
         # Note this takes about 14 seconds each, very slow!!!
         """
         try:
             # requires the shape file too
-            geometry_one = gpd.read_file(f"{shapefile_path}/ne_10m_coastline.shp")
+            geometry_one = gpd.read_file(
+                f"{data_path()['DATA_PATH']}/ne_10m_coastline.shp"
+            )
             geometry_one = geometry_one.set_crs(self.crs)
             geometry_two = Point([longitude, latitude])
             gdf_p = gpd.GeoDataFrame(geometry=[geometry_two], crs=self.crs)
             gdf_l = geometry_one
             gdf_p = gdf_p.to_crs(gdf_p.estimate_utm_crs())
-            # print(gdf_p.to_string())
             gdf_l = gdf_l.to_crs(gdf_p.crs)
-            # TODO: index 1399 has inf values, investigate
-            # RuntimeWarning: invalid value encountered in distance
-            #   return lib.distance(a, b, **kwargs)
             all_distances = [
                 gdf_p.geometry.distance(gdf_l.get_geometry(0)[i])[0]
                 for i in range(len(gdf_l.get_geometry(0)))
@@ -102,8 +99,8 @@ class GeospatialManager:
         local_time = utc.astimezone(to_zone)
         return local_time.isoformat()  # [:19]
 
+    @staticmethod
     def get_local_hour_of_day(
-        self,
         iso_time: str = "2026-01-26T20:35:00Z",
         latitude: float = 51.508742,
         longitude: float = -30.410156,

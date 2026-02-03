@@ -37,8 +37,6 @@ def fetch_raw_files():
         with zipfile.ZipFile(file_path, "r") as zip_ref:
             zip_ref.extractall(os.path.join(Path(file_path).parent, "HB201906_EVR"))
 
-    # file_name =
-    # return Path(file_name).parent
     return os.path.join(Path(file_path).parent, "HB201906_EVR")
 
 
@@ -384,7 +382,9 @@ class EchoviewRecordManager:
             ]
             all_evr_files.sort()
             print(f"Found {len(all_evr_files)} EVR files.")
+            #
             # TODO: only processing two files right now
+            #
             for evr_file in all_evr_files[0]:
                 self.process_evr_file(
                     evr_file_path=os.path.dirname(evr_file),
