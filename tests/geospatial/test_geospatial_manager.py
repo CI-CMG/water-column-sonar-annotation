@@ -32,14 +32,14 @@ def test_check_distance_from_coastline():
 
 
 def test_check_distance_from_coastline_woods_hole(
-    process_check_distance_from_coastline,
+    # process_check_distance_from_coastline,
 ):
     geospatial_manager = GeospatialManager()
     # Point in middle of woods hole vineyard sound: https://wktmap.com/?9b405aa9
     distance = geospatial_manager.check_distance_from_coastline(
         latitude=41.494692,
         longitude=-70.647926,
-        shapefile_path=process_check_distance_from_coastline,
+        # shapefile_path=process_check_distance_from_coastline,
     )
     # The sound is 5 km across
     # assert np.isclose(distance, 4_457.0347)  # 4.5 km --> should be 2.5 km?
