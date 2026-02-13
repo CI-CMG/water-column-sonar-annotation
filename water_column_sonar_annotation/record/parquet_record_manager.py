@@ -1,6 +1,5 @@
 from json import dumps
 
-
 # from pyspark.sql.functions import *
 
 """
@@ -50,7 +49,7 @@ class ParquetRecordManager:
         self.phase_of_day: str = phase_of_day
         self.classification: str = classification
         self.filename: str = filename
-        self.region_id: int = int(region_id)
+        self.region_id: int = int(region_id)  # TODO: is this always an int??? ...yes
         self.ship: str = ship
         self.cruise: str = cruise
         self.instrument: str = instrument

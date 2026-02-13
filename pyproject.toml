@@ -20,6 +20,7 @@ dependencies = [
     "fiona",
     "folium",
     "geopandas",
+    "hvplot",
     "netcdf4",
     "numpy",
     "pandas",

@@ -5,6 +5,11 @@ Tool for converting EVR files to annotated regions of interest in parquet format
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/CI-CMG/water-column-sonar-annotation/test_action.yaml)
 ![PyPI - Version](https://img.shields.io/pypi/v/water-column-sonar-annotation) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/CI-CMG/water-column-sonar-annotation) ![GitHub repo size](https://img.shields.io/github/repo-size/CI-CMG/water-column-sonar-annotation)
 
+# Annotations Download
+
+Annotations are available at the first tagged version of this repo:
+https://github.com/CI-CMG/water-column-sonar-annotation/releases/tag/v26.1.0
+
 # Setting up the Python Environment
 
 > Python 3.12.12
