@@ -1,10 +1,13 @@
 from json import dumps
+from typing import List, Union
 
 # from pyspark.sql.functions import *
 
 """
 Format for export to parquet and bulk ingest into neo4j:
 """
+
+Num = Union[int, float]
 
 
 class ParquetRecordManager:
@@ -31,7 +34,9 @@ class ParquetRecordManager:
         instrument,
         point_count,
         geometry_hash,
-        geometry,
+        # geometry,
+        x,
+        y,
         ###
     ):
         print("__init__ called")
@@ -55,7 +60,8 @@ class ParquetRecordManager:
         self.instrument: str = instrument
         self.point_count: int = int(point_count)
         self.geometry_hash: str = geometry_hash
-        self.geometry: str = str(geometry)
+        self.x: List[Num] = x
+        self.y: List[Num] = y
 
     # def __enter__(self):
     #     print("__enter__ called")

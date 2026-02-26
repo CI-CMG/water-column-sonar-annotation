@@ -45,7 +45,7 @@ uv run pre-commit install --allow-missing-config
 uv run pre-commit install
 ```
 
-# Test Coverage
+# Test & Coverage
 
 TODO
 

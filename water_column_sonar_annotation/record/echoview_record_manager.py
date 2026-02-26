@@ -235,9 +235,7 @@ class EchoviewRecordManager:
             ### Region classification (string). Default value is "Unclassified regions" ###
             evr_region_classification = record_lines[-3]
             if evr_region_classification not in self.evr_region_classifications:
-                raise Exception(
-                    f"Problem, unknown region classification: {evr_region_classification}"
-                )
+                print(f"Unknown region classification: {evr_region_classification}")
             print(f"Region classification: {evr_region_classification}")
             #
             # TODO: If the data has krill, skip creating a record of it
@@ -250,18 +248,20 @@ class EchoviewRecordManager:
             # print(f"EVR points: {evr_points}")  # TODO: strip last entry
             #
             evr_point_chunks = list(itertools.batched(evr_points, 3))
-            processed_points = []
+            #
+            x_times = []
+            y_depths = []
             for evr_point_chunk in evr_point_chunks:
                 processed_point = self.process_vertice(
                     date_string=evr_point_chunk[0],
                     time_string=evr_point_chunk[1],
                     depth=float(evr_point_chunk[2]),
                 )
-                processed_points.append(processed_point)
+                x_times.append(processed_point[0])
+                y_depths.append(processed_point[1])
+
             #
-            geometry = processed_points
-            #
-            if len(evr_points) != evr_point_count * 3:
+            if len(x_times) != evr_point_count:
                 raise Exception("EVR point count does not match expected.")
             #
             # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
@@ -334,7 +334,8 @@ class EchoviewRecordManager:
                 instrument="EK60",
                 point_count=evr_point_count,
                 geometry_hash=geometry_hash,
-                geometry=str(geometry),
+                x=x_times,
+                y=y_depths,
             )
             update_df = pd.DataFrame([parquet_record_manager.to_dict()])
             self.all_records_df = pd.concat(
