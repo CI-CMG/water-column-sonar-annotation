@@ -52,6 +52,13 @@ def test_get_depth():
     assert np.isclose(depth_value, 96.36)  # 96.356674
 
 
+def test_get_depth_index():
+    # Converts depth float value to nearest index
+    cruise_manager = CruiseManager()
+    depth_index_value = cruise_manager.get_depth_index(23.4)
+    assert depth_index_value == 117
+
+
 def test_get_altitude():
     """This gets the distance from EVR to the bottom"""
     cruise_manager = CruiseManager()

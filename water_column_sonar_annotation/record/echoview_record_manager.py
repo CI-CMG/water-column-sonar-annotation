@@ -78,7 +78,7 @@ class EchoviewRecordManager:
             "3": "fishtracks",
             "4": "bad (empty water)",
         }
-        self.evr_region_classifications = [
+        self.evr_region_classifications = [  # Specific to Mike's workflow
             "possible_herring",
             "atlantic_herring",
             "fish_school",
@@ -138,6 +138,23 @@ class EchoviewRecordManager:
         dt = self.process_datetime_string(date_string, time_string)
         # print(dt.isoformat())  # is epoch time in nanoseconds
         return dt.value, round(depth, 2)
+
+    def process_vertice_index(
+        self,
+        time,
+        depth,
+    ) -> tuple:
+        # Takes time/depth and returns the associated indexes from the cruise
+        #  used by leaflet coordinates to draw polygons
+        # TODO:
+        # get cruise and convert depth to nearest depth
+        self.cruise_manager.get_depth_index()
+
+        #  need to get cruise and convert time to nearest ping_time
+
+        # depth negative
+
+        return time, round(depth, 2)
 
     def process_evr_record_full_geometry(
         self,
@@ -248,9 +265,13 @@ class EchoviewRecordManager:
             # print(f"EVR points: {evr_points}")  # TODO: strip last entry
             #
             evr_point_chunks = list(itertools.batched(evr_points, 3))
-            #
+            #########################################################
+            #########################################################
+            # TODO: these should be in the cruise index coordinates as well for leaflet
             x_times = []
             y_depths = []
+            x_index_times = []
+            y_index_depths = []
             for evr_point_chunk in evr_point_chunks:
                 processed_point = self.process_vertice(
                     date_string=evr_point_chunk[0],
@@ -259,7 +280,16 @@ class EchoviewRecordManager:
                 )
                 x_times.append(processed_point[0])
                 y_depths.append(processed_point[1])
+                #
+                processed_index_point = self.process_vertice_index(
+                    time=processed_point[0],
+                    depth=processed_point[1],
+                )
+                x_index_times.append(processed_index_point[0])
+                y_index_depths.append(processed_index_point[1])
 
+            #########################################################
+            #########################################################
             #
             if len(x_times) != evr_point_count:
                 raise Exception("EVR point count does not match expected.")

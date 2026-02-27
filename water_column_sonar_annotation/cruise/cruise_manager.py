@@ -78,6 +78,21 @@ class CruiseManager:
         except Exception as e:
             print(f"Could not find depth: {e}")
 
+    def get_depth_index(self, original_depth_meters: float) -> int | None:
+        """
+        Returns the bottom depth in meters for a given interval of ISO
+        timestamps. Value returned is the minimum depth over that interval.
+        """
+        try:
+            depth_values = self.cruise.depth.values
+            difference_array = np.absolute(depth_values - original_depth_meters)
+            index = difference_array.argmin()
+            # print("Nearest element to the given values is : ", difference_array[index])
+            # print("Index of nearest value is : ", index)
+            return index
+        except Exception as e:
+            print(f"Could not find depth index from cruise: {e}")
+
     def get_altitude(
         self,
         start_time: str = "2019-10-16T16:20:00",
