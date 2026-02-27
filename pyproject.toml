@@ -1,6 +1,10 @@
 [project]
 name = "water-column-sonar-annotation"
-version = "26.2.3"
+
+version = "26.2.4"
+# git tag -a v26.2.3 -m "Releasing v26.2.3"
+# git push origin --tags
+
 authors = [
     { name = "Rudy Klucik", email = "rudy.klucik@noaa.gov" },
 ]

@@ -413,31 +413,25 @@ class EchoviewRecordManager:
             all_evr_files.sort()
             print(f"Found {len(all_evr_files)} EVR files.")
             #
-            # TODO: only processing two files right now
-            #
             for evr_file in all_evr_files:
                 self.process_evr_file(
                     evr_file_path=os.path.dirname(evr_file),
                     evr_file_name=os.path.basename(evr_file),
                 )
-            # I don't have the lat/lon information to draw here... need to query the zarr store...
             print(self.all_records_df)
-            # self.all_records_df.set_index(
-            #     keys="geometry_hash", drop=False, inplace=True
-            # )
-            #  sort by time
             self.all_records_df.sort_values(
-                by="time_start",
+                by="time_start",  # sort by time
                 axis=0,
                 ascending=True,
                 inplace=True,
                 ignore_index=False,
             )
+            self.all_records_df.reset_index(inplace=True, drop=True)
             print("writing files")
             #
             # for front-end visualization
             self.all_records_df.to_parquet(
-                path="parquet_record_full.parquet",
+                path="parquet_record_full3.parquet",
                 engine="pyarrow",
                 compression="snappy",
                 index=True,
@@ -458,13 +452,13 @@ class EchoviewRecordManager:
             )
 
 
-# if __name__ == "__main__":
-#     try:
-#         echoview_record_manager = EchoviewRecordManager()
-#         echoview_record_manager.process_evr_directory()
-#         print("done processing everything")
-#     except Exception as e:
-#         print(e)
+if __name__ == "__main__":
+    try:
+        echoview_record_manager = EchoviewRecordManager()
+        echoview_record_manager.process_evr_directory()
+        print("done processing everything")
+    except Exception as e:
+        print(e)
 
 
 # Example of polygon
