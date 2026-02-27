@@ -154,7 +154,8 @@ def test_process_evr_record_possible_herring():
         output.geometry_hash
         == "a5032c1ae6a14cb534ae2dfcfcf15056a9dfc23c04270f7e7f1e44f3d23beb7c"
     )
-    # assert len(output.geometry) == 120  # TODO: elaborate
+    assert output.y_index[0] == 121
+    assert output.x_index[0] == 1282150
 
 
 def test_process_evr_record_fish_school():

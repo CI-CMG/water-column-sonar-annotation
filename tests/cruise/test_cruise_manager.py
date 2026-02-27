@@ -59,6 +59,17 @@ def test_get_depth_index():
     assert depth_index_value == 117
 
 
+def test_get_time_index():
+    # Converts timestamp to nearest index from cruise
+    cruise_manager = CruiseManager()
+    time_in_nanoseconds = np.datetime64("2019-09-25 22:47:24.213000").astype(int)
+    depth_index_value = cruise_manager.get_time_index(time_in_nanoseconds)
+    assert depth_index_value == 1282150
+    time_in_nanoseconds2 = np.datetime64("2019-09-25 22:47:34.000000").astype(int)
+    depth_index_value2 = cruise_manager.get_time_index(time_in_nanoseconds2)
+    assert depth_index_value2 == 1282160
+
+
 def test_get_altitude():
     """This gets the distance from EVR to the bottom"""
     cruise_manager = CruiseManager()

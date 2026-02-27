@@ -141,20 +141,17 @@ class EchoviewRecordManager:
 
     def process_vertice_index(
         self,
-        time,
+        time,  # nanoseconds
         depth,
     ) -> tuple:
         # Takes time/depth and returns the associated indexes from the cruise
         #  used by leaflet coordinates to draw polygons
-        # TODO:
-        # get cruise and convert depth to nearest depth
-        self.cruise_manager.get_depth_index()
-
         #  need to get cruise and convert time to nearest ping_time
-
-        # depth negative
-
-        return time, round(depth, 2)
+        time_index = self.cruise_manager.get_time_index(time)
+        # get cruise and convert depth to nearest depth
+        depth_index = self.cruise_manager.get_depth_index(depth)
+        # Note: depth needs to be negative for leaflet but keep pos here
+        return time_index, depth_index
 
     def process_evr_record_full_geometry(
         self,
@@ -282,7 +279,7 @@ class EchoviewRecordManager:
                 y_depths.append(processed_point[1])
                 #
                 processed_index_point = self.process_vertice_index(
-                    time=processed_point[0],
+                    time=processed_point[0] / 1000,
                     depth=processed_point[1],
                 )
                 x_index_times.append(processed_index_point[0])
@@ -366,6 +363,8 @@ class EchoviewRecordManager:
                 geometry_hash=geometry_hash,
                 x=x_times,
                 y=y_depths,
+                x_index=x_index_times,
+                y_index=y_index_depths,
             )
             update_df = pd.DataFrame([parquet_record_manager.to_dict()])
             self.all_records_df = pd.concat(

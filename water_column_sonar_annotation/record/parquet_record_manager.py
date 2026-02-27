@@ -37,6 +37,8 @@ class ParquetRecordManager:
         # geometry,
         x,
         y,
+        x_index,
+        y_index,
         ###
     ):
         print("__init__ called")
@@ -62,6 +64,8 @@ class ParquetRecordManager:
         self.geometry_hash: str = geometry_hash
         self.x: List[Num] = x
         self.y: List[Num] = y
+        self.x_index: List[Num] = x_index
+        self.y_index: List[Num] = y_index
 
     # def __enter__(self):
     #     print("__enter__ called")

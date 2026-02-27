@@ -29,6 +29,11 @@ class CruiseManager:
                 **kwargs,
             )
             self.cruise = cruise
+            # used for depth indexes
+            self.depth_values = self.cruise.depth.values
+            # used for time indexes
+            all_times = self.cruise.time
+            self.all_times_as_ints = all_times.astype(int).values / 1000
         except Exception as e:
             print(f"Could not open cruise: {e}")
 
@@ -84,11 +89,26 @@ class CruiseManager:
         timestamps. Value returned is the minimum depth over that interval.
         """
         try:
-            depth_values = self.cruise.depth.values
-            difference_array = np.absolute(depth_values - original_depth_meters)
+            ### move to self
+            # depth_values = self.cruise.depth.values
+            ###
+            difference_array = np.absolute(self.depth_values - original_depth_meters)
             index = difference_array.argmin()
             # print("Nearest element to the given values is : ", difference_array[index])
             # print("Index of nearest value is : ", index)
+            return index
+        except Exception as e:
+            print(f"Could not find depth index from cruise: {e}")
+
+    def get_time_index(self, original_time: int) -> int | None:
+        # Returns the closest time index, original_time in nanoseconds
+        try:
+            ### move to self
+            # all_times = self.cruise.time
+            # all_times_as_ints = all_times.astype(int).values / 1000
+            ###
+            difference_array = np.absolute(self.all_times_as_ints - original_time)
+            index = difference_array.argmin()
             return index
         except Exception as e:
             print(f"Could not find depth index from cruise: {e}")
