@@ -16,6 +16,7 @@ class ParquetRecordManager:
         ###
         time_start,
         time_end,
+        ping_time,
         depth_min,
         depth_max,
         altitude,
@@ -44,6 +45,7 @@ class ParquetRecordManager:
         print("__init__ called")
         self.time_start = time_start
         self.time_end = time_end
+        self.ping_time = ping_time
         self.depth_min = round(depth_min, 2)
         self.depth_max = round(depth_max, 2)
         self.altitude = round(altitude, 2)

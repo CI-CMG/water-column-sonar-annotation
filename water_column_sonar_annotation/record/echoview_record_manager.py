@@ -290,7 +290,10 @@ class EchoviewRecordManager:
             #
             if len(x_times) != evr_point_count:
                 raise Exception("EVR point count does not match expected.")
-            #
+
+            # if evr_point_count == 4: # hack to speed up processing alex's annotations
+            #     raise Exception("Skipping bbox w 4 points.")
+
             # "0" = bad (no data); "1" = analysis; "2" = marker, "3" = fishtracks; "4" = bad (empty water);
             evr_region_type = [x for x in record_lines[-2].split(" ") if x][-1]
             print(f"Region type: {self.region_type[evr_region_type]}")
@@ -343,6 +346,7 @@ class EchoviewRecordManager:
                 ###
                 time_start=evr_left_x_value_of_bounding_rectangle,
                 time_end=evr_right_x_value_of_bounding_rectangle,
+                ping_time=x_index_times[0],
                 depth_min=evr_top_y_value_of_bounding_rectangle,
                 depth_max=evr_bottom_y_value_of_bounding_rectangle,
                 altitude=evr_altitude,
@@ -431,7 +435,7 @@ class EchoviewRecordManager:
             #
             # for front-end visualization
             self.all_records_df.to_parquet(
-                path="parquet_record_full3.parquet",
+                path="parquet_record_full6_ALEX.parquet",
                 engine="pyarrow",
                 compression="snappy",
                 index=True,
@@ -452,13 +456,13 @@ class EchoviewRecordManager:
             )
 
 
-if __name__ == "__main__":
-    try:
-        echoview_record_manager = EchoviewRecordManager()
-        echoview_record_manager.process_evr_directory()
-        print("done processing everything")
-    except Exception as e:
-        print(e)
+# if __name__ == "__main__":
+#     try:
+#         echoview_record_manager = EchoviewRecordManager()
+#         echoview_record_manager.process_evr_directory("../../data/HB201906_ALEX/")
+#         print("done processing everything")
+#     except Exception as e:
+#         print(e)
 
 
 # Example of polygon

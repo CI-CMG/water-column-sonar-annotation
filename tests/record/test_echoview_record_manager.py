@@ -133,6 +133,7 @@ def test_process_evr_record_possible_herring():
     )
     assert output.time_start == np.datetime64("2019-09-25 22:47:24.213000")
     assert output.time_end == np.datetime64("2019-09-25 22:47:36.246000")
+    assert output.ping_time == 1282150
     assert output.depth_min == 24.13
     assert output.depth_max == 35.17
     assert output.altitude == 1.62
@@ -165,6 +166,7 @@ def test_process_evr_record_fish_school():
     )
     assert output.time_start == np.datetime64("2019-09-25 17:49:45.160500")
     assert output.time_end == np.datetime64("2019-09-25 17:49:50.164500")
+    assert output.ping_time == 1264322
     assert output.depth_min == 20.28
     assert output.depth_max == 26.3
     assert output.altitude == 6.83
@@ -186,7 +188,14 @@ def test_process_evr_record_fish_school():
         output.geometry_hash
         == "e8f26554fa6ade664adc7c2b60896cf86d47092636ed8f2152c4cfa45dd962a9"
     )
-    # assert len(output.geometry) == 898  # TODO: elaborate
+    assert len(output.x) == 30
+    assert len(output.y) == 30
+    assert len(output.x_index) == 30
+    assert len(output.y_index) == 30
+    assert output.x[0] == 1569433785160500000
+    assert output.x_index[0] == 1264322
+    assert output.y[0] == 22.03
+    assert output.y_index[0] == 110
 
 
 def test_process_evr_record_unclassified_regions():
@@ -197,6 +206,7 @@ def test_process_evr_record_unclassified_regions():
     # print(output)
     assert output.time_start == np.datetime64("2019-09-25 20:53:45.895300")
     assert output.time_end == np.datetime64("2019-09-25 20:54:11.931800")
+    assert output.ping_time == 1275344
     assert output.depth_min == 9.28
     assert output.depth_max == 11.53
     assert output.altitude == 21.68
@@ -218,7 +228,14 @@ def test_process_evr_record_unclassified_regions():
         output.geometry_hash
         == "521b9994ebcc00cb4640a9e9cfddf7470f3903e3eab8c918604269c48e723d8a"
     )
-    # assert len(output.geometry) == 352  # TODO: elaborate
+    assert len(output.x) == 12
+    assert len(output.y) == 12
+    assert len(output.x_index) == 12
+    assert len(output.y_index) == 12
+    assert output.x[0] == 1569444825895300000
+    assert output.x_index[0] == 1275344
+    assert output.y[0] == 9.6
+    assert output.y_index[0] == 48
 
 
 def test_process_evr_record_krill_schools():
@@ -236,6 +253,7 @@ def test_process_evr_record_ah_school_1():
     )
     assert output.time_start == np.datetime64("2019-11-06 13:14:58.378000")
     assert output.time_end == np.datetime64("2019-11-06 13:14:59.379000")
+    # assert output.ping_time == ?
     assert output.depth_min == 25.3
     assert output.depth_max == 30.29
     assert output.altitude == 70.28
@@ -257,7 +275,14 @@ def test_process_evr_record_ah_school_1():
         output.geometry_hash
         == "6b976f373a3e035a3d0df62984cbdacf9e9df81e36369352637c7ae5458924a2"
     )
-    # assert len(output.geometry) == 148  # TODO: elaborate
+    assert len(output.x) == 30
+    assert len(output.y) == 30
+    assert len(output.x_index) == 30
+    assert len(output.y_index) == 30
+    assert output.x[0] == 1569433785160500000
+    assert output.x_index[0] == 1264322
+    assert output.y[0] == 22.03
+    assert output.y_index[0] == 110
 
 
 def test_process_evr_record_ah_school_2():
@@ -267,6 +292,7 @@ def test_process_evr_record_ah_school_2():
     )
     assert output.time_start == np.datetime64("2019-11-06 13:17:30.571500")
     assert output.time_end == np.datetime64("2019-11-06 13:17:33.574500")
+    assert output.ping_time == 3541968
     assert output.depth_min == 31.83
     assert output.depth_max == 35.86
     assert output.altitude == 70.93
@@ -288,7 +314,14 @@ def test_process_evr_record_ah_school_2():
         output.geometry_hash
         == "038c6e57dd95bf9c836ae8ef6145ae53a4fa64bd6f836050c8fa8f2601ba2a41"
     )
-    # assert len(output.geometry) == 480  # TODO: elaborate
+    assert len(output.x) == 16
+    assert len(output.y) == 16
+    assert len(output.x_index) == 16
+    assert len(output.y_index) == 16
+    assert output.x[0] == 1573046251572500000
+    assert output.x_index[0] == 3541968
+    assert output.y[0] == 34.33
+    assert output.y_index[0] == 172
 
 
 # Testing Alex's Updates
