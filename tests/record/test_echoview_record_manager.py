@@ -253,7 +253,7 @@ def test_process_evr_record_ah_school_1():
     )
     assert output.time_start == np.datetime64("2019-11-06 13:14:58.378000")
     assert output.time_end == np.datetime64("2019-11-06 13:14:59.379000")
-    # assert output.ping_time == ?
+    assert output.ping_time == 3541815
     assert output.depth_min == 25.3
     assert output.depth_max == 30.29
     assert output.altitude == 70.28
@@ -275,14 +275,14 @@ def test_process_evr_record_ah_school_1():
         output.geometry_hash
         == "6b976f373a3e035a3d0df62984cbdacf9e9df81e36369352637c7ae5458924a2"
     )
-    assert len(output.x) == 30
-    assert len(output.y) == 30
-    assert len(output.x_index) == 30
-    assert len(output.y_index) == 30
-    assert output.x[0] == 1569433785160500000
-    assert output.x_index[0] == 1264322
-    assert output.y[0] == 22.03
-    assert output.y_index[0] == 110
+    assert len(output.x) == 5
+    assert len(output.y) == 5
+    assert len(output.x_index) == 5
+    assert len(output.y_index) == 5
+    assert output.x[0] == 1573046098378000000
+    assert output.x_index[0] == 3541815
+    assert output.y[0] == 25.49
+    assert output.y_index[0] == 127
 
 
 def test_process_evr_record_ah_school_2():
