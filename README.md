@@ -79,3 +79,11 @@ uv sync --extra dev
 
 - https://roboflow.com/formats/coco-json
 - https://www.v7labs.com/blog/coco-dataset-guide
+
+```json
+{
+  "id": "8eca84de-2d78-4f62-be35-eccb579d0183",
+  "version": 0,
+  "name": "test"
+}
+```

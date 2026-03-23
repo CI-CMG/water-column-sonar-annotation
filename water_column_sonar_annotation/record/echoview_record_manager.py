@@ -1,6 +1,7 @@
 import hashlib
 import itertools
 import os
+import uuid
 import zipfile
 from pathlib import Path
 
@@ -344,6 +345,7 @@ class EchoviewRecordManager:
             #
             parquet_record_manager = ParquetRecordManager(
                 ###
+                uuid=str(uuid.uuid4()),
                 time_start=evr_left_x_value_of_bounding_rectangle,
                 time_end=evr_right_x_value_of_bounding_rectangle,
                 ping_time=x_index_times[0],

@@ -14,6 +14,7 @@ class ParquetRecordManager:
     def __init__(
         self,
         ###
+        uuid,
         time_start,
         time_end,
         ping_time,
@@ -43,6 +44,7 @@ class ParquetRecordManager:
         ###
     ):
         print("__init__ called")
+        self.uuid = uuid
         self.time_start = time_start
         self.time_end = time_end
         self.ping_time = ping_time

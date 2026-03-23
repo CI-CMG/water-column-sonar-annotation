@@ -1,3 +1,5 @@
+import uuid
+
 import numpy as np
 import pytest
 
@@ -16,6 +18,14 @@ def teardown_module():
 @pytest.fixture
 def process_evr_file_path(test_path):
     return test_path["DATA_TEST_PATH"]
+
+
+def is_valid_uuid(val):
+    try:
+        uuid.UUID(str(val))
+        return True
+    except ValueError:
+        return False
 
 
 #######################################################
@@ -131,6 +141,7 @@ def test_process_evr_record_possible_herring():
     output = echoview_record_manager.process_evr_record_full_geometry(
         evr_record=possible_herring_example, file_name="test.evr"
     )
+    assert is_valid_uuid(output.uuid)
     assert output.time_start == np.datetime64("2019-09-25 22:47:24.213000")
     assert output.time_end == np.datetime64("2019-09-25 22:47:36.246000")
     assert output.ping_time == 1282150
@@ -164,6 +175,7 @@ def test_process_evr_record_fish_school():
     output = echoview_record_manager.process_evr_record_full_geometry(
         evr_record=fish_school_example, file_name="test.evr"
     )
+    assert is_valid_uuid(output.uuid)
     assert output.time_start == np.datetime64("2019-09-25 17:49:45.160500")
     assert output.time_end == np.datetime64("2019-09-25 17:49:50.164500")
     assert output.ping_time == 1264322
@@ -204,6 +216,7 @@ def test_process_evr_record_unclassified_regions():
         evr_record=unclassified_regions_example, file_name="test.evr"
     )
     # print(output)
+    assert is_valid_uuid(output.uuid)
     assert output.time_start == np.datetime64("2019-09-25 20:53:45.895300")
     assert output.time_end == np.datetime64("2019-09-25 20:54:11.931800")
     assert output.ping_time == 1275344
@@ -251,6 +264,7 @@ def test_process_evr_record_ah_school_1():
     output = echoview_record_manager.process_evr_record_full_geometry(
         evr_record=ah_school_example1, file_name="test.evr"
     )
+    assert is_valid_uuid(output.uuid)
     assert output.time_start == np.datetime64("2019-11-06 13:14:58.378000")
     assert output.time_end == np.datetime64("2019-11-06 13:14:59.379000")
     assert output.ping_time == 3541815
@@ -290,6 +304,7 @@ def test_process_evr_record_ah_school_2():
     output = echoview_record_manager.process_evr_record_full_geometry(
         evr_record=ah_school_example2, file_name="test.evr"
     )
+    assert is_valid_uuid(output.uuid)
     assert output.time_start == np.datetime64("2019-11-06 13:17:30.571500")
     assert output.time_end == np.datetime64("2019-11-06 13:17:33.574500")
     assert output.ping_time == 3541968
@@ -330,6 +345,7 @@ def test_process_evr_record_alex_example():
     output = echoview_record_manager.process_evr_record_full_geometry(
         evr_record=alex_example, file_name="test.evr"
     )
+    assert is_valid_uuid(output.uuid)
     assert output.time_start == np.datetime64("2019-10-14 05:45:42.390000")
     assert output.time_end == np.datetime64("2019-10-14 05:45:58.409000")
     assert output.depth_min == 44.8
