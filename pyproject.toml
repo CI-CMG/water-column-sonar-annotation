@@ -1,7 +1,7 @@
 [project]
 name = "water-column-sonar-annotation"
 
-version = "26.3.1"
+version = "26.11.0"
 # git tag -a v26.2.3 -m "Releasing v26.2.3"
 # git push origin --tags
 
@@ -14,7 +14,7 @@ maintainers = [
 description = "Processing Tool for Working with Water Column Sonar Annotations"
 keywords = ["ocean", "sonar", "water column"]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 license = "MIT"
 license-files = ["LICENSE"]
 

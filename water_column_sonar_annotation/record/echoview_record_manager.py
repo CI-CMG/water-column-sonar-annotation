@@ -458,13 +458,15 @@ class EchoviewRecordManager:
             )
 
 
-# if __name__ == "__main__":
-#     try:
-#         echoview_record_manager = EchoviewRecordManager()
-#         echoview_record_manager.process_evr_directory("../../data/HB201906_ALEX/")
-#         print("done processing everything")
-#     except Exception as e:
-#         print(e)
+if __name__ == "__main__":
+    try:
+        # one = uuid.uuid4()
+        # two = uuid.uuid4()
+        echoview_record_manager = EchoviewRecordManager()
+        echoview_record_manager.process_evr_directory("../../data/HB201906_ALEX/")
+        print("done processing everything")
+    except Exception as e:
+        print(e)
 
 
 # Example of polygon
